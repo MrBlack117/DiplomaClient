@@ -1,0 +1,5 @@
+.progress{
+  transition: .4s;
+  justify-content: center;
+  text-align: center;
+}

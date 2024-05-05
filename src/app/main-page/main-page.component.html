@@ -1,0 +1,306 @@
+<main class="main">
+  <!--==================== HOME ====================-->
+  <section class="home section" id="home">
+    <div class="home__container container grid">
+      <div class="home__data">
+        <h1 class="home__title">
+          Досліджуйте <br> свій внутрішній <br> світ
+        </h1>
+        <p class="home__description">
+          Дізнайтеся про різні аспекти вашої психіки та
+          залиште позаду всі труднощі у розумінні себе.
+        </p>
+        <div class="home__button">
+          <button routerLink="/test/new" class="button">Створити тест</button> <!-- Пройти тести -->
+        </div>
+
+      </div>
+
+      <div class="home__images">
+
+        <div class="home__img">
+          <img src="assets/img/head.png" alt="">
+        </div>
+      </div>
+    </div>
+
+
+  </section>
+
+  <!--==================== POPULAR ====================-->
+  <section class="section" id="popular">
+    <div class="container">
+      <h2 class="section__title">
+        Популярні тести<span>.</span>
+      </h2>
+
+      <div class="popular__container swiper">
+        <div class="swiper-wrapper">
+          <article class="popular__card swiper-slide" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
+            <img [src]="test.imageSrc" class="popular__img">
+
+            <div class="popular__data">
+              <h2 class="popular__title">
+                {{test.name}}
+              </h2>
+              <p class="popular__description">
+                {{test.brief}}
+              </p>
+              <div class="popular__info">
+                <div class="test__passes">
+                  <i class='bx bxs-check-circle'></i> {{ test.usersResults?.length }}
+                </div>
+                <div class="test_likes">
+                  <i class='bx bxs-like'></i> {{ test.likes }}
+                </div>
+                <div class="test_dislikes">
+                  <i class='bx bxs-dislike'></i> {{ test.dislikes }}
+                </div>
+                <div class="test__comments">
+                  <i class='bx bxs-comment'></i> {{ test.comments?.length }}
+                </div>
+
+              </div>
+            </div>
+          </article>
+
+
+        </div>
+
+        <div class="swiper-button-next">
+          <i class="bx bx-chevron-right"></i>
+        </div>
+        <div class="swiper-button-prev">
+          <i class="bx bx-chevron-left"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--==================== PSYCHOLOGY MATTERS ====================-->
+  <section class="psychology section" id="psychology">
+    <div class="psychology__container container grid">
+      <div class="psychology__images">
+        <div class="psychology__orbe"></div>
+
+        <div class="psychology__img">
+          <img src="assets/img/psycology.png" alt="">
+        </div>
+      </div>
+
+      <div class="psychology__content">
+        <div class="psychology__data">
+          <span class="section__subtitle">Важливість психології</span>
+          <h2 class="section__title">
+            Психологія важлива для кожного<span>.</span>
+          </h2>
+          <p class="psychology__description">
+            Психологічні тести є ключовим інструментом для розуміння себе та своїх потреб.
+            Пройшовши тести та отримавши персоналізовану допомогу від психолога, ви зможете:
+          </p>
+        </div>
+
+        <div class="psychology__accordion" #accordionItems>
+          <div class="psychology__accordion-item">
+            <header class="psychology__accordion-header">
+              <i class="bx bxs-check-shield psychology__accordion-icon"></i>
+              <h3 class="psychology__accordion-title">
+                Освідчені результати
+              </h3>
+              <div class="psychology__accordion-arrow">
+                <i class="bx bxs-down-arrow"></i>
+              </div>
+            </header>
+
+            <div class="psychology__accordion-content">
+              <p class="psychology__accordion-description">
+                Психологічні тести базуються на наукових методах, що гарантує надійні результати.
+                Це допомагає точно визначити ваші сильні та слабкі сторони для подальшого самовдосконалення.
+              </p>
+            </div>
+          </div>
+
+          <div class="psychology__accordion-item">
+            <header class="psychology__accordion-header">
+              <i class="bx bxs-chevrons-up psychology__accordion-icon"></i>
+              <h3 class="psychology__accordion-title">
+                Підвищення самосвідомості
+              </h3>
+              <div class="psychology__accordion-arrow">
+                <i class="bx bxs-down-arrow"></i>
+              </div>
+            </header>
+
+            <div class="psychology__accordion-content">
+              <p class="psychology__accordion-description">
+                Пройшовши тести, ви зможете краще зрозуміти себе, свої емоції та потреби.
+                Це допоможе вам у вирішенні проблем та покращенні якості життя.
+              </p>
+            </div>
+          </div>
+
+          <div class="psychology__accordion-item">
+            <header class="psychology__accordion-header">
+              <i class="bx bxs-bar-chart-square psychology__accordion-icon"></i>
+              <h3 class="psychology__accordion-title">
+                Підтримка та розвиток
+              </h3>
+              <div class="psychology__accordion-arrow">
+                <i class="bx bxs-down-arrow"></i>
+              </div>
+            </header>
+
+            <div class="psychology__accordion-content">
+              <p class="psychology__accordion-description">
+                Отримавши персоналізовану допомогу від психолога, ви зможете працювати над своїми проблемами
+                та розвивати особистісні якості для досягнення бажаних цілей та задоволення від життя.
+              </p>
+            </div>
+          </div>
+
+          <div class="psychology__accordion-item">
+            <header class="psychology__accordion-header">
+              <i class="bx bxs-check-square psychology__accordion-icon"></i>
+              <h3 class="psychology__accordion-title">
+                Підтримка та конфіденційність
+              </h3>
+              <div class="psychology__accordion-arrow">
+                <i class="bx bxs-down-arrow"></i>
+              </div>
+            </header>
+
+            <div class="psychology__accordion-content">
+              <p class="psychology__accordion-description">
+                Ми гарантуємо конфіденційність ваших даних та підтримку під час проходження тестів та роботи з
+                психологом.
+                Ваші потреби та безпека - наш пріоритет.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!--==================== CONTACT ====================-->
+  <section class="contact section" id="contact">
+    <div class="contact__container container grid">
+      <div class="contact__images">
+        <div class="contact__orbe"></div>
+        <div class="contact__img">
+          <img src="assets/img/contact.png" alt="">
+        </div>
+      </div>
+
+      <div class="contact__content">
+        <div class="contact__data">
+                <span class="section__subtitle">
+                    Зв'язок з психологами
+                </span>
+          <h2 class="section__title">
+            Легко зв'язатися з нами<span>.</span>
+          </h2>
+          <p class="contact__description">
+            Є проблеми з розумінням себе? Потрібен вам гід у виборі вашого майбутнього дому? Чи
+            можливо вам потрібна консультація з питань психології? Просто зв'яжіться з нами.
+          </p>
+        </div>
+
+        <div class="contact__card">
+          <div class="contact__card-box">
+            <div class="contact__card-info">
+              <i class="bx bxs-phone-call"></i>
+              <div>
+                <h3 class="contact__card-title">
+                  Call
+                </h3>
+                <p class="contact__card-description">
+                  022.321.123.12
+                </p>
+              </div>
+            </div>
+
+            <button class="button contact__card-button">
+              Call Now
+            </button>
+          </div>
+
+          <div class="contact__card-box">
+            <div class="contact__card-info">
+              <i class="bx bxs-message-rounded-dots"></i>
+              <div>
+                <h3 class="contact__card-title">
+                  Chat
+                </h3>
+                <p class="contact__card-description">
+                  022.321.123.12
+                </p>
+              </div>
+            </div>
+
+            <button class="button contact__card-button">
+              Chat Now
+            </button>
+
+          </div>
+
+          <div class="contact__card-box">
+            <div class="contact__card-info">
+              <i class="bx bxs-video"></i>
+              <div>
+                <h3 class="contact__card-title">
+                  Video Call
+                </h3>
+                <p class="contact__card-description">
+                  022.321.123.12
+                </p>
+              </div>
+            </div>
+
+            <button class="button contact__card-button">
+              Video Call Now
+            </button>
+          </div>
+
+          <div class="contact__card-box">
+            <div class="contact__card-info">
+              <i class="bx bxs-envelope"></i>
+              <div>
+                <h3 class="contact__card-title">
+                  Message
+                </h3>
+                <p class="contact__card-description">
+                  022.321.123.12
+                </p>
+              </div>
+            </div>
+
+            <button class="button contact__card-button">
+              Message Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--==================== SUBSCRIBE ====================-->
+  <section class="subscribe section">
+    <div class="subscribe__container container">
+      <h1 class="subscribe__title">
+        Почніть свій психологічний шлях з Mental
+      </h1>
+      <p class="subscribe__description">
+        Підпишіться і отримайте можливість проходження захоплюючих тестів та знайдіть глибоке розуміння себе,
+        Почніть пізнавати себе ще краще вже сьогодні
+      </p>
+      <a href="#" class="button subscribe__button">
+        Почати зараз
+      </a>
+    </div>
+  </section>
+
+</main>

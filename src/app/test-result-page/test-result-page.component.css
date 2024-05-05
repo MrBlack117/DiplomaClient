@@ -1,0 +1,114 @@
+.section{
+  padding-top: 50px;
+}
+
+.test-result__img {
+  padding-bottom: 2rem;
+}
+
+.test-result__img img {
+  border-radius: 15px;
+}
+
+.psychology__accordion-content {
+  padding-top: 2rem;
+}
+
+.possible-result img {
+  max-width: 75px;
+  max-height: 75px;
+  border-radius: 15px;
+}
+
+.possible-result {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+}
+
+.psychology__accordion-text {
+  padding-left: 2rem;
+}
+
+.reaction{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-bottom: 2rem;
+}
+
+.form-warp {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+form {
+  max-width: 460px;
+}
+
+
+.button {
+  height: 3rem;
+  width: 5rem;
+  border-radius: 5px;
+  background: #151111;
+  transition: .3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: none;
+}
+
+.submit-btn:hover {
+  background: #738bea;
+}
+
+label {
+  left: 5px;
+}
+
+.reactions{
+  display: flex;
+  flex-direction: row;
+  min-width: 11rem;
+  justify-content: space-between;
+}
+
+
+
+.comment-input textarea {
+  height: 3rem;
+  overflow: auto;
+  border-radius: 3px;
+  border: 1px solid gray;
+  resize: none;
+}
+
+.comment{
+  margin-top: 1rem;
+  background-color: var(--body-color);
+  border: 2px solid var(--border-color);
+  padding: 1.25rem .75rem;
+  border-radius: .5rem;
+  transition: .3s;
+}
+
+.comment:hover {
+  box-shadow: 0 8px 24px hsla(228, 66%, 45%, .1);
+}
+
+.comment-name{
+  margin-top: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.like-btn:hover, .like{
+  background: #58b658;
+}
+
+.dislike-btn:hover, .dislike{
+  background: #f54d4d;
+}

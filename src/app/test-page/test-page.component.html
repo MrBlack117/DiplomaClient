@@ -1,0 +1,56 @@
+<!--==================== HOME ====================-->
+<section class="home section" id="home">
+  <div class="home__container container grid" *ngIf="test; else loader">
+    <div class="home__images">
+
+      <div class="test-home__img">
+        <img [src]="test.imageSrc">
+      </div>
+    </div>
+    <div class="home__data">
+      <h1 class="home__title">
+        {{ test.name }}
+      </h1>
+      <p class="home__description">
+        {{ test.description }}
+      </p>
+
+    </div>
+  </div>
+  <ng-template #loader>
+    <i class='bx bx-loader-alt bx-spin' ></i>
+  </ng-template>
+</section>
+
+<!--==================== QUESTIONS  ====================-->
+<!-- test-page.component.html-->
+
+<section class="questions section" id="questions" *ngIf="!loading; else loader">
+  <div class="container">
+    <div class="progress-bar">
+      <span class="progress-text">Питання {{ currentQuestionIndex }}/{{ questions.length }}</span>
+      <div class="progress" [style.width]="progressPercent + '%'">
+        <span class="progress-percent" *ngIf="progressPercent != 0">{{ progressPercent.toFixed(0) }}%</span>
+      </div>
+    </div>
+
+    <div class="questions__container grid">
+      <div class="question" *ngFor="let question of questions; let i = index">
+        <h2 class="question__title">{{ question.text }}</h2>
+        <div class="question__options">
+          <div class="option" *ngFor="let option of question.answerOptionsObj">
+            <input type="radio" name="answer{{ i }}" [value]="option._id" (change)="onOptionSelect(option, i)">
+            {{ option.text }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="button submit-button" (click)="onSubmit()">Зберегти результати</button>
+  </div>
+</section>
+
+
+<ng-template #loader>
+  <i class='bx bx-loader-alt bx-spin' ></i>
+</ng-template>

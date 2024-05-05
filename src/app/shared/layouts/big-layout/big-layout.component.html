@@ -1,0 +1,163 @@
+<div class="body-box" #bodybox>
+  <!--==================== HEADER ====================-->
+  <header class="header" id="header" #header>
+    <nav class="nav container">
+      <a routerLink="/" class="nav__logo">
+        Mental <i class='bx bx-brain'></i>
+      </a>
+      <div class="nav__menu">
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a routerLink="/main" routerLinkActive="active-link" class="nav__link">
+              <i class="bx bxs-brain"></i>
+              <span>Головна</span>
+            </a>
+          </li>
+          <li class="nav__item">
+            <a routerLink="/tests" routerLinkActive="active-link" class="nav__link">
+              <i class="bx bx-copy-alt"></i>
+              <span>Тести</span>
+            </a>
+          </li>
+          <li class="nav__item">
+            <a routerLink="/a" routerLinkActive="active-link" class="nav__link">
+              <i class="bx bx-award"></i>
+              <span>Психологи</span>
+            </a>
+          </li>
+          <li class="nav__item">
+            <a routerLink="/b" routerLinkActive="active-link" class="nav__link">
+              <i class="bx bx-phone"></i>
+              <span>Про нас</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Theme change button -->
+      <i class="bx bx-moon change-theme" id="theme-button" #themebtn></i>
+
+      <a routerLink="/auth" class="button nav__button" *ngIf="!user; else profileLink">
+        Вхід
+      </a>
+
+      <ng-template #profileLink>
+        <a routerLink="/user" class="button nav__button">
+          {{ user.name }}
+        </a>
+      </ng-template>
+    </nav>
+  </header>
+
+  <!--==================== MAIN ====================-->
+
+  <router-outlet></router-outlet>
+
+  <!--==================== FOOTER ====================-->
+  <footer class="footer section">
+    <div class="footer__container container grid">
+      <div>
+        <a href="#" class="footer__logo">
+          Mental <i class='bx bxs-brain'></i>
+        </a>
+        <p class="footer__description">
+          Наша мета - допомогти кожному<br>
+          знайти гармонію та щастя <br>
+          у своєму внутрішньому світі
+        </p>
+      </div>
+
+      <div class="footer__content">
+
+        <div>
+          <h3 class="footer__title">
+            About
+          </h3>
+
+          <ul class="footer__links">
+            <li>
+              <a href="#" class="footer__link">About Us</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">Features</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">News & Blog</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer__title">
+            Company
+          </h3>
+
+          <ul class="footer__links">
+            <li>
+              <a href="#" class="footer__link">How we work?</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">Capital</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">Security</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer__title">
+            Support
+          </h3>
+
+          <ul class="footer__links">
+            <li>
+              <a href="#" class="footer__link">FAQs</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">Support center</a>
+            </li>
+            <li>
+              <a href="#" class="footer__link">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer__title">
+            Follow Us
+          </h3>
+
+          <ul class="footer__social">
+            <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
+              <i class="bx bxl-facebook-circle"></i>
+            </a>
+            <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
+              <i class="bx bxl-instagram-alt"></i>
+            </a>
+            <a href="https://www.pinterest.com/" target="_blank" class="footer__social-link">
+              <i class="bx bxl-pinterest"></i>
+            </a>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__info container">
+        <span class="footer__copy">
+            &#169; All rights reserved
+        </span>
+
+      <div class="footer__privacy">
+        <a href="#">Terms & Agreements</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!--========== SCROLL UP ==========-->
+  <div class="scrollup" id="scroll-up" #scrollUp (click)="scrollToTop()">
+    <i class="bx bx-chevrons-up"></i>
+  </div>
+
+</div>

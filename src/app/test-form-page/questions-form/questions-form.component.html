@@ -1,0 +1,100 @@
+<!--==================== QUESTIONS-FORM ====================-->
+<section class="popup section" #popup>
+  <span class="overlay" #overlay></span>
+  <div class="container">
+
+    <div class="heading">
+      <h2>Питання:</h2>
+    </div>
+
+    <div class="results-warp">
+      <div *ngIf="!loading; else loader">
+
+        <div class="collection" *ngIf="questions.length !== 0; else empty">
+          <div *ngFor="let question of questions; index as i" class="question-component show-modal"
+               (click)="openModal(question)">
+
+            <p>
+              {{ i + 1 }}. {{ question.text }}
+            </p>
+
+
+
+            <button type="button" class="close-btn"
+                    (click)="onDeleteQuestion($event, question)"><i class='bx bx-trash'></i>
+            </button>
+
+          </div>
+        </div>
+
+        <ng-template #empty>
+          <div>
+            Немає можливих результатів
+          </div>
+        </ng-template>
+
+      </div>
+      <ng-template #loader>
+        <i class='bx bx-loader-alt bx-spin' ></i>
+      </ng-template>
+
+      <div class="question-component-add show-modal" (click)="onAddPosition()">
+        <i class='bx bx-list-plus' ></i>
+      </div>
+    </div>
+
+    <div class="modal-box questions-form">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="add-questions-form">
+        <div class="question-text input-warp">
+          <textarea formControlName="question" class="input-field" placeholder=" " required></textarea>
+          <label class="input-label">Питання</label>
+          <div *ngIf="form.get('question')?.errors?.['required'] && form.get('question')?.touched"
+               class="error-message">Поле обов'язкове для заповнення
+          </div>
+        </div>
+
+        <div class="answer-options-container">
+          <div formArrayName="answerOptions">
+            <div class="answer-option-warp" *ngFor="let answerOption of answerOptions.controls; let i = index">
+              <div class="answer-option" [formGroupName]="i">
+                {{ i + 1 }}.
+                <div class="answer-text input-warp">
+                  <input type="text" class="input-field" placeholder=" " formControlName="text" required>
+                  <label class="input-label">Варіант відповіді</label>
+                  <div *ngIf="answerOption.get('text')?.errors?.['required'] && answerOption.get('text')?.touched"
+                       class="error-message">Поле обов'язкове для заповнення
+                  </div>
+                </div>
+
+                <div class="possible-result input-warp">
+                  <select class="select-field" formControlName="possibleResult" required>
+                    <option *ngFor="let possibleResult of possibleResults" [ngValue]="possibleResult._id">{{ possibleResult.name }}</option>
+                  </select>
+
+                  <label class="input-label" id="select-label">Потенційний результат</label>
+                  <div
+                    *ngIf="answerOption.get('possibleResult')?.errors?.['required'] && answerOption.get('possibleResult')?.touched"
+                    class="error-message">Поле обов'язкове для заповнення
+                  </div>
+                </div>
+
+                <div class="input-warp">
+                  <input type="number" class="input-field" placeholder=" " formControlName="score" required>
+                  <label class="input-label">Кількість балів</label>
+                  <div *ngIf="answerOption.get('score')?.errors?.['required'] && answerOption.get('score')?.touched"
+                       class="error-message">Поле обов'язкове для заповнення
+                  </div>
+                </div>
+
+                <button type="button" class="delete-answer-btn" (click)="removeAnswerOption(i)">Видалити</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="add-answer-btn" (click)="addAnswerOption()">Додати варіант відповіді</button>
+        <button type="submit" class="add-question-block-btn">Зберегти питання</button>
+      </form>
+    </div>
+  </div>
+</section>

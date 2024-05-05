@@ -1,0 +1,75 @@
+<div class="logo" routerLink="/">
+  <i class='bx bxs-brain'></i>
+  <h3>Mental</h3>
+</div>
+
+
+<div class="userContent" #userContent>
+
+  <div class="testData">
+
+    <div class="userHeader">
+      <div class="userData">
+        <h2>Привіт, {{ user.name }}</h2>
+        <p>{{ user.email }}</p>
+      </div>
+      <button class="button" (click)="logOut()">Вийти з аккаунту</button>
+    </div>
+
+
+    <div class="completedTests">
+      <h3>Пройдені тести: </h3>
+      <div class="tests">
+        <div class="test" *ngFor="let test of completedTestsData">
+          <p class="test-link" [routerLink]="['/result', test.resultId]">{{ test.test }}</p>
+          <p>{{test.date}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Раздел созданных тестов -->
+    <div class="createdTests">
+      <h3>Створені тести: </h3>
+      <div class="tests">
+        <div class="test" *ngFor="let testData of createdTestsData">
+          <p class="">{{ testData.test.name }}</p>
+          <div class="icons">
+            <i class='bx bx-stats' (click)="showStatistics(testData.test._id)"></i>
+            <i class='bx bx-edit' routerLink="/test/edit/{{testData.test._id}}"></i>
+            <i class='bx bx-trash' (click)="deleteTest(testData.test._id)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="testStatistics">
+    <div *ngIf="showTestStatistics">
+      <h2>Статистика теста "{{ selectedTestName }}"</h2>
+
+      <div class="possible-results">
+        <h3>Можливі результати:</h3>
+        <div class="possible-result" *ngFor="let result of testResults">
+          {{ result.name }} - {{result.frequency}} ({{ result.percent.toFixed(2) }}%)
+        </div>
+      </div>
+
+      <div class="questions">
+        <h3>Питання:</h3>
+        <div class="answer-options" *ngFor="let question of testQuestions">
+          <h4>{{ question.name }}</h4>
+
+            <div class="answer-option" *ngFor="let option of question.answerOptions">
+              {{ option.name }} - {{ option.frequency }} ({{ option.percent.toFixed(2) }}%)
+            </div>
+
+          <br>
+        </div>
+      </div>
+    </div>
+    <button class="button" (click)="normalMode()">Назад</button>
+  </div>
+
+</div>
+

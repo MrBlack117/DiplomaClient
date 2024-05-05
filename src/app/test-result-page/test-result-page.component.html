@@ -1,0 +1,118 @@
+<section class="home section" id="home">
+  <div class="home__container container grid" *ngIf="!loading; else loader">
+
+    <div class="home__data">
+      <h1 class="home__title">
+        {{ bestResult.name }}
+      </h1>
+      <p class="home__description">
+        {{ bestResult.description }}
+      </p>
+
+    </div>
+
+    <div class="home__images">
+
+      <div class="test-result__img">
+        <img [src]="bestResult.imageSrc">
+      </div>
+    </div>
+  </div>
+
+
+  <ng-template #loader>
+    Завантаження...
+  </ng-template>
+
+</section>
+
+<section class="all-results-section section">
+  <div class="container">
+    <h2>Перегляньте свої результати</h2>
+    <h3>Дізнайтесь детальні характеристики проходження</h3>
+
+    <div class="psychology__accordion " #accordionItems>
+      <div class="psychology__accordion-item">
+        <header class="psychology__accordion-header">
+          <i class="bx bxs-check-shield psychology__accordion-icon"></i>
+          <h3 class="psychology__accordion-title">
+            Усі результати
+          </h3>
+          <div class="psychology__accordion-arrow">
+            <i class="bx bxs-down-arrow"></i>
+          </div>
+        </header>
+
+        <div class="psychology__accordion-content">
+          <div class="possible-result" *ngFor="let possibleResult of results">
+            <div class="psychology__accordion-image">
+              <img [src]="possibleResult.imageSrc">
+            </div>
+
+            <div class="psychology__accordion-text">
+              <p class="psychology__accordion-name">
+                {{ possibleResult.name }}
+              </p>
+              <p class="psychology__accordion-description">
+                {{ possibleResult.description }} Кількість очок: {{ possibleResult.score }}
+              </p>
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section [formGroup]="form" (ngSubmit)="onSubmit()" class="comments-section section">
+  <div class="container">
+    <h2>Поділіться своїми враженнями</h2>
+    <h3>Вкажіть чи сподобався вам тест та напишіть коментар</h3>
+
+
+    <div class="form-warp">
+
+      <div class="reactions">
+        <button class="like-btn button" (click)="addReaction('like')" [ngClass]="{ 'like': userReaction === 'like' }">
+          <i class='bx bx-like'></i>
+        </button>
+        <button class="dislike-btn button" (click)="addReaction('dislike')" [ngClass]="{ 'dislike': userReaction === 'dislike' }">
+          <i class='bx bx-dislike'></i>
+        </button>
+      </div>
+
+
+
+      <form class="comment-form">
+        <div class="comment-input input-warp">
+                    <textarea formControlName="text"
+                              class="input-field"
+                              placeholder=" "
+                              [ngClass]="{'invalid' : form.get('description')?.invalid && form.get('description')?.touched}">
+                    </textarea>
+          <label>Ваш коментар</label>
+        </div>
+      </form>
+      <div class="submit-btn button" (click)="onSubmit()">
+        <i class='bx bx-send'></i>
+      </div>
+    </div>
+
+    <div class="comments">
+      <h2>Коментарі:</h2>
+      <div class="comment" *ngFor="let comment of comments">
+        <div class="comment-name">
+          <h4>{{ comment.userName }}</h4>
+        </div>
+
+        <div class="comment-text">
+          <p>{{ comment.commentText }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,109 @@
+<!--==================== HOME ====================-->
+<section class="tests__home home section" id="home">
+  <div class="home__container container">
+    <div class="home__data">
+      <h1 class="home__title">
+        Психічне здоров'я та особистісні тести
+      </h1>
+      <p class="home__description">
+        Ви екстраверт чи інтроверт? У вас високий традиційний IQ або емоційний IQ? Чи є у вас задатки
+        підприємця? Знайдіть відповіді на ці та інші питання за допомогою тесту Psychology Today. Всі наші
+        тести
+        містять 20 запитань і займають близько 3 хвилин на проходження.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== POPULAR TESTS ==================== -->
+<section class="popular-tests section" id="popular">
+  <div class="container">
+    <h2 class="section__title">
+      Популярні тести<span>.</span>
+    </h2>
+
+    <div class="popular__container">
+      <article class="test__card" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
+        <img [src]="test.imageSrc" alt="" class="popular__img">
+        <div class="test__data">
+          <h2 class="test__title">{{ test.name }}</h2>
+          <p class="test__description">{{ test.brief }}</p>
+          <div class="test__info">
+            <div class="test__passes">
+              <i class='bx bxs-check-circle'></i> {{ test.usersResults?.length }}
+            </div>
+            <div class="test_likes">
+              <i class='bx bxs-like'></i> {{ test.likes }}
+            </div>
+            <div class="test_dislikes">
+              <i class='bx bxs-dislike'></i> {{ test.dislikes }}
+            </div>
+            <div class="test__comments">
+              <i class='bx bxs-comment'></i> {{ test.comments?.length }}
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LATEST TESTS ==================== -->
+<section class="latest__tests section" id="latest">
+  <div class="container">
+    <h2 class="section__title">
+      Нові тести<span>.</span>
+    </h2>
+
+    <div class="latest__container">
+      <article class="test__card" *ngFor="let test of latestTests" [routerLink]="['/test', test._id]">
+        <img [src]="test.imageSrc" alt="" class="popular__img">
+        <div class="test__data">
+          <h2 class="test__title">{{ test.name }}</h2>
+          <p class="test__description">{{ test.brief }}</p>
+          <div class="test__info">
+            <div class="test__passes">
+              <i class='bx bxs-check-circle'></i> {{ test.usersResults?.length }}
+            </div>
+            <div class="test_likes">
+              <i class='bx bxs-like'></i> {{ test.likes }}
+            </div>
+            <div class="test_dislikes">
+              <i class='bx bxs-dislike'></i> {{ test.dislikes }}
+            </div>
+            <div class="test__comments">
+              <i class='bx bxs-comment'></i> {{ test.comments?.length }}
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!--==================== ALL TESTS ====================-->
+<section class="all__tests section" id="all">
+  <div class="container">
+    <h2 class="section__title">
+      Усі тести<span>.</span>
+    </h2>
+    <div class="test-categories">
+      <button type="button" class="test-categories__button active">All</button>
+      <button type="button" class="test-categories__button false">Personality</button>
+      <button type="button" class="test-categories__button false">Relationships</button>
+      <button type="button" class="test-categories__button false">Health</button>
+      <button type="button" class="test-categories__button false">Career</button>
+      <button type="button" class="test-categories__button false">IQ</button>
+    </div>
+    <div class="all__container">
+      <ul class="tests-list">
+        <li class="test-listing" *ngFor="let test of tests" [routerLink]="['/test', test._id]">
+          {{test.name}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+

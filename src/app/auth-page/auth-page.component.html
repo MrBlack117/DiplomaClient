@@ -1,0 +1,114 @@
+<div class="inner__box" #innerbox>
+  <div class="forms-warp">
+    <form action="#" autocomplete="off" class="sign-in-form" [formGroup]="signInForm" (ngSubmit)="signInSubmit()">
+      <div class="logo" routerLink="/">
+        <i class='bx bxs-brain'></i>
+        <h3>Mental</h3>
+      </div>
+
+      <div class="heading">
+        <h2>Увійдіть у свій акаунт</h2>
+        <h6>Ще не зареєстровані? </h6>
+        <a class="toggle">Зареєструватися</a>
+      </div>
+
+      <div class="actual-form">
+        <div class="input-warp">
+          <input
+            formControlName="signInEmail"
+            type="email"
+            placeholder=" "
+            class="input-field"
+            id="signInEmail"
+            [ngClass]="{'invalid': signInForm.get('signInEmail')?.invalid && signInForm.get('signInEmail')?.touched}"
+          />
+          <label>Пошта</label>
+          <div *ngIf="signInForm.get('signInEmail')?.errors?.['required'] && signInForm.get('signInEmail')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
+          <div *ngIf="signInForm.get('signInEmail')?.errors?.['email'] && signInForm.get('signInEmail')?.touched" class="error-message">Будь ласка, введіть дійсну електронну адресу</div>
+        </div>
+
+        <div class="input-warp">
+          <input
+            formControlName="signInPassword"
+            type="password"
+            placeholder=" "
+            class="input-field"
+            id="signInPassword"
+            [ngClass]="{'invalid': signInForm.get('signInPassword')?.invalid && signInForm.get('signInPassword')?.touched}"
+          />
+          <label>Пароль</label>
+          <div *ngIf="signInForm.get('signInPassword')?.errors?.['required'] && signInForm.get('signInPassword')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
+          <div *ngIf="signInForm.get('signInPassword')?.errors?.['minlength'] && signInForm.get('signInPassword')?.touched" class="error-message">Пароль повинен містити принаймні 6 символів</div>
+        </div>
+
+        <button type="submit" class="sign-btn" [disabled]="signInForm.invalid || signInForm.disabled">Увійти</button>
+
+      </div>
+    </form>
+
+
+    <form action="#" autocomplete="off" class="sign-up-form" [formGroup]="signUpForm" (ngSubmit)="signUpSubmit()">
+      <div class="logo" routerLink="/">
+        <i class='bx bxs-brain'></i>
+        <h3> Mental</h3>
+      </div>
+
+      <div class="heading">
+        <h2>Зареєструйтесь</h2>
+        <h6>Вже зареєстровані? </h6>
+        <a class="toggle">Автроризуватися</a>
+      </div>
+
+      <div class="actual-form">
+        <div class="input-warp">
+          <input
+            formControlName="signUpName"
+            type="text"
+            class="input-field"
+            placeholder=" "
+            id="signUpName"
+            [ngClass]="{'invalid': signUpForm.get('signUpName')?.invalid && signUpForm.get('signUpName')?.touched}"
+          />
+          <label>Ім'я</label>
+          <div *ngIf="signUpForm.get('signUpName')?.errors?.['required'] && signUpForm.get('signUpName')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
+        </div>
+
+        <div class="input-warp">
+          <input
+            formControlName="signUpEmail"
+            type="email"
+            class="input-field"
+            placeholder=" "
+            id="signUpEmail"
+            [ngClass]="{'invalid': signUpForm.get('signUpEmail')?.invalid && signUpForm.get('signUpEmail')?.touched}"
+          />
+          <label>Пошта</label>
+          <div *ngIf="signUpForm.get('signUpEmail')?.errors?.['required'] && signUpForm.get('signUpEmail')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
+          <div *ngIf="signUpForm.get('signUpEmail')?.errors?.['email'] && signUpForm.get('signUpEmail')?.touched" class="error-message">Будь ласка, введіть дійсну електронну адресу</div>
+        </div>
+
+        <div class="input-warp">
+          <input
+            formControlName="signUpPassword"
+            type="password"
+            placeholder=" "
+            class="input-field"
+            id="signUpPassword"
+            [ngClass]="{'invalid': signUpForm.get('signUpPassword')?.invalid && signUpForm.get('signUpPassword')?.touched}"
+          />
+          <label>Пароль</label>
+          <div *ngIf="signUpForm.get('signUpPassword')?.errors?.['required'] && signUpForm.get('signUpPassword')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
+          <div *ngIf="signUpForm.get('signUpPassword')?.errors?.['minlength'] && signUpForm.get('signUpPassword')?.touched" class="error-message">Пароль повинен містити принаймні 6 символів</div>
+        </div>
+
+        <button type="submit" class="sign-btn" [disabled]="signUpForm.invalid || signUpForm.disabled">Зареєструватися</button>
+
+      </div>
+    </form>
+
+  </div>
+
+  <div class="auth-image">
+    <img src="assets/img/head.png" alt="">
+  </div>
+</div>
