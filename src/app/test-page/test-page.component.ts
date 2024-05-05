@@ -7,6 +7,7 @@ import {QuestionsService} from "../shared/services/questions.service";
 import {AnswerOptionsService} from "../shared/services/answer-options.service";
 import {UserTestResultService} from "../shared/services/user-test-result.service";
 import {ToastrService} from "ngx-toastr";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-test-page',
@@ -26,6 +27,7 @@ export class TestPageComponent implements OnInit {
   selectedOptions: AnswerOption[] = [];
   currentQuestionIndex: number = 0;
   progressPercent: number = 0
+  apiUrl = environment.apiUrl + '/';
 
   constructor(private testsService: TestsService,
               private questionService: QuestionsService,

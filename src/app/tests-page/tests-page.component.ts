@@ -3,6 +3,7 @@ import {TestsService} from "../shared/services/tests.service";
 import {Router, RouterLink} from "@angular/router";
 import {Test} from "../shared/interfaces";
 import {NgForOf} from "@angular/common";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-tests-page',
@@ -18,7 +19,8 @@ export class TestsPageComponent implements OnInit{
 
   popularTests: Test[] = [];
   latestTests: Test[] = [];
-  tests: Test[]
+  tests: Test[];
+  apiUrl = environment.apiUrl + '/';
 
   constructor(private testsService: TestsService, private router: Router) {
   }

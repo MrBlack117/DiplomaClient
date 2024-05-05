@@ -5,6 +5,7 @@ import {PossibleResult} from "../../shared/interfaces";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ToastrService} from "ngx-toastr";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-possible-result-form',
@@ -25,7 +26,7 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
   @ViewChild('overlay', {static: true}) overlayRef!: ElementRef;
   @ViewChild('imageInput') imageInputRef: ElementRef;
 
-
+  apiUrl = environment.apiUrl + '/';
   possibleResults: PossibleResult[] = [];
   possibleResultId: string | undefined = undefined;
   loading = false;

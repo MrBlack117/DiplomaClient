@@ -14,7 +14,7 @@
     <div class="home__images">
 
       <div class="test-result__img">
-        <img [src]="bestResult.imageSrc">
+        <img [src]="apiUrl + bestResult.imageSrc">
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
         <div class="psychology__accordion-content">
           <div class="possible-result" *ngFor="let possibleResult of results">
             <div class="psychology__accordion-image">
-              <img [src]="possibleResult.imageSrc">
+              <img [src]="apiUrl + possibleResult.imageSrc">
             </div>
 
             <div class="psychology__accordion-text">

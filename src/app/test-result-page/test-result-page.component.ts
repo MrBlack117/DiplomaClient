@@ -10,6 +10,7 @@ import {CommentsService} from "../shared/services/comments.service";
 import {AuthService} from "../shared/services/auth.service";
 import {ToastrService} from "ngx-toastr";
 import {TestsService} from "../shared/services/tests.service";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-test-result-page',
@@ -32,6 +33,7 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
   loading = false
   form: FormGroup;
   userReaction: string = ''
+  apiUrl = environment.apiUrl + '/';
 
   @ViewChild('accordionItems', {static: true}) accordionItemsRef!: ElementRef;
 

@@ -6,9 +6,9 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {NgClass, NgIf} from "@angular/common";
 import {TestsService} from "../shared/services/tests.service";
 import {Observable, of, switchMap} from "rxjs";
-import {PossibleResult, Test} from "../shared/interfaces";
+import {Test} from "../shared/interfaces";
 import {ToastrService} from "ngx-toastr";
-
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-test-form-page',
@@ -33,6 +33,8 @@ export class TestFormPageComponent implements OnInit {
   imagePreview: any;
   isNew = true;
   test: Test;
+  apiUrl = environment.apiUrl + '/';
+
 
   constructor(private route: ActivatedRoute, private testService: TestsService, private router: Router,
               private toastr: ToastrService) {

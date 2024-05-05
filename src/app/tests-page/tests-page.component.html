@@ -24,7 +24,7 @@
 
     <div class="popular__container">
       <article class="test__card" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
-        <img [src]="test.imageSrc" alt="" class="popular__img">
+        <img [src]="apiUrl + test.imageSrc" alt="" class="popular__img">
         <div class="test__data">
           <h2 class="test__title">{{ test.name }}</h2>
           <p class="test__description">{{ test.brief }}</p>
@@ -57,7 +57,7 @@
 
     <div class="latest__container">
       <article class="test__card" *ngFor="let test of latestTests" [routerLink]="['/test', test._id]">
-        <img [src]="test.imageSrc" alt="" class="popular__img">
+        <img [src]="apiUrl + test.imageSrc" alt="" class="popular__img">
         <div class="test__data">
           <h2 class="test__title">{{ test.name }}</h2>
           <p class="test__description">{{ test.brief }}</p>
