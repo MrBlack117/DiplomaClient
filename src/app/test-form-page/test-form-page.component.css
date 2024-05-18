@@ -1,6 +1,5 @@
 /*=============== HOME ===============*/
 
-
 .home__container {
   padding-top: 4rem;
   row-gap: 3.5rem;
@@ -196,7 +195,7 @@ form.sign-up-form {
 
 .description,
 .description textarea {
-  height: 15rem;
+  height: 5rem;
   background: var(--container-color);
   resize: none;
   margin-bottom: 2rem;
@@ -207,6 +206,58 @@ form.sign-up-form {
 
 .image-input {
   display: none;
+}
+
+.types {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  padding: .5rem;
+  margin-bottom: 0.5rem;
+}
+
+.type p {
+  border: 2px solid var(--container-color);
+  border-radius: 0.5rem 0 0 0.5rem;
+  height: 3rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  cursor: pointer;
+  transition: .3s;
+  padding: 0.5rem;
+}
+
+.type p:hover, .selected p {
+  background: var(--body-color);
+}
+
+.type {
+  display: flex;
+  flex-direction: row;
+  margin-right: .5rem;
+}
+
+.infoBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  padding: 0.5rem;
+  background-color: #151111;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: .3s;
+
+}
+
+.infoBtn:hover {
+  background: #4070f4;
 }
 
 label {
@@ -266,14 +317,14 @@ main.sign-up-mode .carousel {
   left: 0%;
 }
 
-.error-message-name{
+.error-message-name {
   color: red;
   position: absolute;
   top: 1.6rem;
   font-size: .7rem;
 }
 
-.error-message-description{
+.error-message-description {
   color: red;
   top: 15rem;
   position: absolute;

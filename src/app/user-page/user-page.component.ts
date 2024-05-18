@@ -1,13 +1,16 @@
-import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {TestsService} from "../shared/services/tests.service";
 import {UserTestResultService} from "../shared/services/user-test-result.service";
-import {Question, Test, TestStatistics, UserTestResult} from "../shared/interfaces";
-import {NgForOf, NgIf} from "@angular/common";
+import {Question, Test, TestStatistics, User, UserTestResult} from "../shared/interfaces";
+import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {Router, RouterLink} from "@angular/router";
 import {QuestionsService} from "../shared/services/questions.service";
 import {AnswerOptionsService} from "../shared/services/answer-options.service";
 import {PossibleResultsService} from "../shared/services/possible-results.service";
 import {ToastrService} from "ngx-toastr";
+import {AuthService} from "../shared/services/auth.service";
+import {FormGroup, FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 
 @Component({
@@ -16,7 +19,9 @@ import {ToastrService} from "ngx-toastr";
   imports: [
     NgForOf,
     RouterLink,
-    NgIf
+    NgIf,
+    ReactiveFormsModule,
+    NgClass
   ],
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.css'
@@ -25,13 +30,26 @@ export class UserPageComponent implements OnInit {
 
   completedTestsData: { test: string, resultId: any, date: string }[] = []
   createdTestsData: { test: Test, results: UserTestResult[] }[] = []
-  testsStatistics: Map<string,TestStatistics> = new Map<string,TestStatistics>();
+  resultsList: { name: string, email: string, date: string, answers: string[], testId: string }[] = []
+  testsStatistics: Map<string, TestStatistics> = new Map<string, TestStatistics>();
   isPsychologist: boolean = true
+  isAdmin:boolean = false
   showTestStatistics: boolean = false
+  showResultsList: boolean = false
   selectedTestName: string
   testResults: any
   testQuestions: any
   user: { name: string, email: string }
+  resultAnswers: string[] = []
+  selectedResult: {
+    testName: string,
+    user: { name: string, email: string },
+    date: string,
+    processedQuestions: { text: string, answerOptions: { id: string, text: string }[] }[]
+  }
+  form: FormGroup;
+  userInfo: any;
+
 
   @ViewChild('userContent', {static: true}) userContentRef!: ElementRef;
 
@@ -40,13 +58,20 @@ export class UserPageComponent implements OnInit {
               private possibleResultsService: PossibleResultsService,
               private questionService: QuestionsService,
               private answerOptionService: AnswerOptionsService,
+              private authService: AuthService,
               private router: Router,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
+
+    this.form = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+
     const userData = localStorage.getItem('user');
-    if(userData !== null){
+    if (userData !== null) {
       this.user = JSON.parse(userData);
     }
 
@@ -98,8 +123,6 @@ export class UserPageComponent implements OnInit {
             complete: () => {
               if (this.createdTestsData.length === tests.length) {
                 this.calculateStatistics()
-                //console.log(this.testsStatistics)
-                //console.log(this.completedTestsData)
               }
             }
           })
@@ -110,7 +133,6 @@ export class UserPageComponent implements OnInit {
       }
     })
   }
-
 
   calculateStatistics() {
     for (const testData of this.createdTestsData) {
@@ -123,15 +145,24 @@ export class UserPageComponent implements OnInit {
       const testPossibleResults = testData.test.possibleResults
       const usersResults = testData.results
       const testId = testData.test._id
+      const processingType = testData.test.processingType
 
 
-      testStats.possibleResults = this.calculatePossibleResultsStats(testPossibleResults, usersResults)
+      if (processingType === 'one') {
+        testStats.possibleResults = this.calculatePossibleResultsStatsOne(testPossibleResults, usersResults)
+      } else if (processingType === 'many') {
+        testStats.possibleResults = this.calculatePossibleResultsStatsMany(testPossibleResults, usersResults)
+      } else if (processingType === 'self') {
+
+      }
+
+
       testStats.questions = this.calculateQuestionsStats(testId, usersResults)
-      this.testsStatistics.set(testId,testStats)
+      this.testsStatistics.set(testId, testStats)
     }
   }
 
-  calculatePossibleResultsStats(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]) {
+  calculatePossibleResultsStatsMany(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]) {
     const possibleResults: { name: string, frequency: number, percent: number }[] = []
 
     // Расчет частоты выбора возможных результатов
@@ -145,20 +176,24 @@ export class UserPageComponent implements OnInit {
     for (const userResult of usersResults) {
       let bestScore = 0;
       let bestResultId = '';
-      for (const possibleResult of userResult.results) {
-        if (possibleResult.score > bestScore) {
-          bestResultId = possibleResult._id;
-          bestScore = possibleResult.score;
+      const results = userResult.results
+      if (results !== undefined) {
+        for (const possibleResult of results) {
+          if (possibleResult.score > bestScore) {
+            bestResultId = possibleResult._id;
+            bestScore = possibleResult.score;
+          }
+        }
+        if (resultsFrequency.has(bestResultId)) {
+          const currentValue = resultsFrequency.get(bestResultId);
+          if (currentValue !== undefined) {
+            resultsFrequency.set(bestResultId, currentValue + 1);
+          }
+        } else {
+          resultsFrequency.set(bestResultId, 1);
         }
       }
-      if (resultsFrequency.has(bestResultId)) {
-        const currentValue = resultsFrequency.get(bestResultId);
-        if (currentValue !== undefined) {
-          resultsFrequency.set(bestResultId, currentValue + 1);
-        }
-      } else {
-        resultsFrequency.set(bestResultId, 1);
-      }
+
     }
 
     // Расчет процентов выбора возможных результатов
@@ -172,6 +207,69 @@ export class UserPageComponent implements OnInit {
         }
       })
     }
+
+    return possibleResults
+  }
+
+  calculatePossibleResultsStatsOne(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]) {
+    const possibleResults: { name: string, frequency: number, percent: number }[] = []
+
+    const resultsFrequency = new Map<string, number>();
+    if (testPossibleResults) {
+      for (const possibleResult of testPossibleResults) {
+        resultsFrequency.set(possibleResult, 0);
+      }
+    }
+    let resultsProcessed = 0
+
+    for (const userResult of usersResults) {
+      let bestResultId: string | undefined = '';
+      const score = userResult.score;
+      if (score !== undefined && testPossibleResults !== undefined) {
+        for (const result of testPossibleResults) {
+          this.possibleResultsService.get(result).subscribe({
+            next: possibleResultObj => {
+              const minScore = possibleResultObj.minScore;
+              const maxScore = possibleResultObj.maxScore;
+              if (minScore !== undefined && maxScore !== undefined) {
+                if (minScore < score && score < maxScore) {
+                  bestResultId = possibleResultObj._id;
+                  if (bestResultId !== undefined) {
+                    if (resultsFrequency.has(bestResultId)) {
+                      const currentValue = resultsFrequency.get(bestResultId);
+                      if (currentValue !== undefined) {
+                        resultsFrequency.set(bestResultId, currentValue + 1);
+                      }
+                    } else {
+                      resultsFrequency.set(bestResultId, 1);
+                    }
+                    resultsProcessed += 1
+                  }
+                }
+              }
+            },
+            error: err => {
+              this.toastr.error(err)
+            },
+            complete: () => {
+              const totalResults = usersResults.length;
+              if (resultsProcessed == totalResults)
+
+                for (const [resultId, frequency] of resultsFrequency.entries()) {
+                  const percent = (frequency / totalResults) * 100;
+
+                  this.possibleResultsService.get(resultId).subscribe({
+                    next: possibleResultObj => {
+                      possibleResults.push({name: possibleResultObj.name, frequency, percent});
+                    }
+                  })
+                }
+            }
+          });
+        }
+      }
+    }
+
 
     return possibleResults
   }
@@ -257,7 +355,6 @@ export class UserPageComponent implements OnInit {
   }
 
   showStatistics(testId: string): void {
-
     this.userContentRef.nativeElement.classList.add('statistics-mode')
 
     const testStats = this.testsStatistics.get(testId)
@@ -271,11 +368,123 @@ export class UserPageComponent implements OnInit {
     }
   }
 
-  normalMode(){
+  showUserTestResultsList(testId: string, testName: string): void {
+    this.showResultsList = true
+    this.userContentRef.nativeElement.classList.add('users-results-mode')
+    this.resultsList = this.getUsersTestResultsList(testId)
+    this.selectedTestName = testName
+  }
+
+  getUsersTestResultsList(testId: string) {
+    const userTestResultsList: { name: string, email: string, date: string, answers: string[], testId: string }[] = []
+    this.userTestResultService.fetch(testId).subscribe({
+      next: (results: UserTestResult[]) => {
+        for (const result of results) {
+          const userId = result.user
+          if (userId !== undefined) {
+            this.authService.getUserData(userId).subscribe({
+              next: (user: User) => {
+                if (result.date !== undefined && user.name !== undefined) {
+                  const formattedDate = new Date(result.date).toLocaleDateString('en-GB', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    year: '2-digit',
+                    month: '2-digit',
+                    day: '2-digit'
+                  });
+                  userTestResultsList.push({
+                    name: user.name,
+                    email: user.email,
+                    date: formattedDate,
+                    answers: result.answers,
+                    testId: testId
+                  })
+                }
+              }
+            })
+          }
+        }
+      }
+    })
+    return userTestResultsList
+  }
+
+  showUserAnswers(testId: string, answers: string[], testName: string, user: {
+    name: string,
+    email: string
+  }, date: string) {
+    this.userContentRef.nativeElement.classList.add('users-answers-mode')
+    this.resultAnswers = answers
+
+    const processedQuestions: { text: string, answerOptions: { id: string, text: string }[] }[] = []
+
+    this.questionService.fetch(testId).subscribe({
+      next: (questions) => {
+        for (const question of questions) {
+          const questionText = question.text
+          const answers: { id: string, text: string }[] = []
+          if (question._id !== undefined) {
+            this.answerOptionService.fetch(question._id).subscribe({
+              next: (response) => {
+                for (const answerOption of response) {
+                  const id = answerOption._id
+                  const text = answerOption.text
+                  if (id !== undefined) {
+                    answers.push({id, text})
+                  }
+                }
+              }
+            })
+          }
+          processedQuestions.push({text: questionText, answerOptions: answers})
+
+        }
+      },
+      error: (err: any) => {
+        this.toastr.error(err)
+      },
+      complete: () => {
+        this.selectedResult = {
+          testName: testName,
+          user: {name: user.name, email: user.email},
+          date: date,
+          processedQuestions: processedQuestions
+        }
+      }
+    })
+  }
+
+  backFromStatistics() {
     this.userContentRef.nativeElement.classList.remove('statistics-mode')
   }
 
-  logOut(){
+  backFromResults() {
+    this.userContentRef.nativeElement.classList.remove('users-results-mode')
+  }
+
+  backFromAnswers() {
+    this.userContentRef.nativeElement.classList.remove('users-answers-mode')
+    this.userContentRef.nativeElement.classList.add('users-results-mode')
+  }
+
+  getUserInfo() {
+    if (this.form.invalid) {
+      return;
+    }
+
+    const email = this.form.get('email')?.value;
+
+    this.authService.getUserByEmail(email).subscribe({
+      next: data => {
+        this.userInfo = data;
+      },
+      error: error => {
+        console.error('Error fetching user info:', error);
+      }
+    });
+  }
+
+  logOut() {
     localStorage.removeItem('user')
     localStorage.removeItem('auth-token')
     this.router.navigate(['/auth'])

@@ -10,6 +10,8 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
+  max-height: 530px;
+  overflow: hidden;
 }
 
 .userHeader {
@@ -27,6 +29,13 @@
 .tests {
   padding-bottom: 2rem;
   max-height: 15vh;
+  overflow: auto;
+}
+
+.users-results-mode .tests{
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+  max-height: 30vh;
   overflow: auto;
 }
 
@@ -65,20 +74,41 @@
   grid-row: 1 / 2;
 }
 
+.resultsList{
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+.user-answers{
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
 
 .testData {
   transform: translateX(0%);
-  transition: .4s;
+  transition: .5s;
   opacity: 1;
-
 }
 
 .testStatistics {
   transform: translateX(100%);
-  transition: .4s;
+  transition: .5s;
   opacity: 0;
-
 }
+
+.resultsList{
+  transform: translateX(200%);
+  transition: .5s;
+  opacity: 0;
+}
+
+.user-answers{
+  transform: translateX(300%);
+  transition: .5s;
+  opacity: 0;
+}
+
 
 .userContent.statistics-mode .testData{
   transform: translateX(-100%);
@@ -89,6 +119,60 @@
  transform: translateX(0%);
   opacity: 1;
 }
+
+.userContent.statistics-mode .resultsList{
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.userContent.statistics-mode  .user-answers{
+  transform: translateX(200%);
+  opacity: 0;
+}
+
+
+.userContent.users-results-mode .testData{
+  transform: translateX(-200%);
+  opacity: 0;
+}
+
+.userContent.users-results-mode .testStatistics {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.userContent.users-results-mode .resultsList{
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.userContent.users-results-mode  .user-answers{
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+
+
+.userContent.users-answers-mode .testData{
+  transform: translateX(-300%);
+  opacity: 0;
+}
+
+.userContent.users-answers-mode .testStatistics {
+  transform: translateX(-200%);
+  opacity: 0;
+}
+
+.userContent.users-answers-mode .resultsList{
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.userContent.users-answers-mode  .user-answers{
+  transform: translateX(0%);
+  opacity: 1;
+}
+
 
 .answer-options{
   max-height: 20rem;
@@ -105,5 +189,18 @@
 .questions{
   max-height: 15rem;
   overflow: auto;
+  margin-bottom: 2rem;
+}
+
+.user-answers_question{
+  margin-top: 2rem
+}
+
+.answer-option{
+  display: flex;
+  flex-direction: row;
+}
+
+.answers-wrap{
   margin-bottom: 2rem;
 }

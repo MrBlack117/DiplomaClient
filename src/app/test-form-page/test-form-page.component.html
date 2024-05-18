@@ -6,7 +6,7 @@
       <div class="home__images">
 
         <div class="home__img">
-          <img [src]="apiUrl + imagePreview" *ngIf="imagePreview">
+          <img [src]="imagePreview" *ngIf="imagePreview">
         </div>
 
       </div>
@@ -33,7 +33,6 @@
                    class="error-message-name">Поле обов'язкове для заповнення
               </div>
             </div>
-
 
             <div class="brief input-warp">
               <input
@@ -64,6 +63,34 @@
               </div>
             </div>
 
+            <div class="processingChoice">
+              <h3>Оберіть тип обробки результатів</h3>
+              <div class="types">
+
+                <div class="type" (click)="this.processingType = 'one'"
+                     [ngClass]="{ 'selected': processingType === 'one' }">
+                  <p>Загальний лічильник</p>
+                  <button class="infoBtn" type="button" (click)="processingInfo('one')"><i
+                    class='bx bx-info-circle'></i></button>
+                </div>
+
+                <div class="type" (click)="processingType = 'many'"
+                     [ngClass]="{ 'selected': processingType === 'many' }">
+                  <p>Окремі лічильники</p>
+                  <button class="infoBtn" type="button" (click)="processingInfo('many')"><i
+                    class='bx bx-info-circle'></i></button>
+                </div>
+
+                <div class="type" (click)="processingType = 'self'"
+                     [ngClass]="{ 'selected': processingType === 'self' }">
+                  <p>Самостійно</p>
+                  <button class="infoBtn" type="button" (click)="processingInfo('self')"><i
+                    class='bx bx-info-circle'></i></button>
+                </div>
+
+              </div>
+            </div>
+
             <div class="image input-warp">
               <input type="file" accept="image/*" class="image-input" (change)="onFileUpload($event)" #imageInput>
               <button type="button" (click)="triggerClick()" class="imageBtn" [disabled]="form.disabled">Додати
@@ -80,9 +107,8 @@
 
               <button *ngIf="!isNew" class="button delete-btn" type="button" (click)="deleteTest()">Видалити</button>
             </div>
+
           </form>
-
-
         </div>
       </div>
     </div>
@@ -90,12 +116,14 @@
 
   <app-possible-result-form
     *ngIf="test"
-    [testId]="test._id">
+    [testId]="test._id"
+    [processingType]="processingType">
   </app-possible-result-form>
 
   <app-questions-form
     *ngIf="test"
-    [testId]="test._id">
+    [testId]="test._id"
+    [processingType]="processingType">
   </app-questions-form>
 
 

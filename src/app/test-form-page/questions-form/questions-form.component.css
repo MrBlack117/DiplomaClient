@@ -138,14 +138,28 @@ form.sign-up-form {
   color: var(--text-color);
 }
 
-
 .answer-options-container {
-  padding: 2rem;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.image-preview img{
+  max-height: 5rem;
+}
+.image-preview{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.image-input{
+  display: none;
 }
 
 .answer-option-warp{
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
+
 .answer-option {
   display: flex;
   flex-direction: row;
@@ -304,15 +318,14 @@ section.active .overlay {
   transform: translate(-50%, -50%) scale(1.2);
 }
 
+.modal-box i {
+  font-size: 20px;
+}
+
 .popup.active .modal-box {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, -50%) scale(1);
-}
-
-.modal-box i {
-  font-size: 70px;
-  color: #4070f4;
 }
 
 .modal-box h2 {

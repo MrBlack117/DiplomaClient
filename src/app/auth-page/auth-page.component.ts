@@ -6,12 +6,15 @@ import {AuthService} from "../shared/services/auth.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router, RouterLink} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
+import {GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
+
+
 
 
 @Component({
   selector: 'app-auth-page',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterLink, GoogleSigninButtonModule],
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.css'
 })
@@ -24,7 +27,7 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('innerbox', {static: true}) innerBoxRef!: ElementRef;
 
   constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute,
-              private toastr: ToastrService) {
+              private toastr: ToastrService, private authService: SocialAuthService,) {
   }
 
   ngOnInit() {
@@ -48,12 +51,27 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
         // need new login
       }
     })
+
+    this.authService.authState.subscribe(async (user) => {
+      this.subDef = this.auth.googleAuth(user.email, user.name).subscribe({
+        next: () => {
+          this.toastr.success('Авторизація успішна!')
+          this.router.navigate(['/main'])
+        },
+        error: (errorResponse: any) => {
+          this.toastr.error(errorResponse.error.message, 'Помилка')
+          this.signInForm.enable()
+        },
+        complete: () => {
+          this.authService.signOut();
+        }
+      })
+    });
   }
 
   ngAfterViewInit() {
     DesignService.authToggle(this.innerBoxRef);
   }
-
 
   signInSubmit() {
     this.signInForm.disable()
@@ -73,8 +91,8 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
     this.signUpForm.disable()
     this.subDef = this.auth.register(this.signUpForm.value).subscribe({
       next: () => {
-        this.toastr.success('Аккаунт створено, будь ласка авторизуйтесь.')
-        this.router.navigate(['/auth'], {
+        this.toastr.success('Аккаунт створено, успішно.')
+        this.router.navigate(['/main'], {
           queryParams: {
             registered: true
           }

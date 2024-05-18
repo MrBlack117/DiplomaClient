@@ -23,6 +23,7 @@ export interface Test {
   name: string
   brief: string
   description: string
+  processingType:string
   questionsIds?: string[]
   imageSrc?: string
   likes?: number
@@ -39,12 +40,15 @@ export interface PossibleResult {
   description: string
   imageSrc?: string
   testId: string
+  minScore?: number
+  maxScore?: number
 }
 
 export interface Question {
   _id?: string
   text: string
   testId: string
+  imageSrc?: string
   answerOptionIds?: string[]
   answerOptions?:  string[]
   answerOptionsObj?: AnswerOption[]
@@ -53,9 +57,10 @@ export interface Question {
 export interface AnswerOption {
   _id?: string
   text: string
+  imageSrc?: string
   questionId?: string
-  possibleResultId: string
-  score: number
+  possibleResultId?: string
+  score?: number
 }
 
 export interface UserTestResult {
@@ -63,7 +68,8 @@ export interface UserTestResult {
   test: string
   user?: string
   date?: Date
-  results: Result[]
+  score?: number
+  results?: Result[]
   answers: string[]
 }
 

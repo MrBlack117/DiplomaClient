@@ -3,3 +3,27 @@
   justify-content: center;
   text-align: center;
 }
+
+.question__image{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  padding-top: 2rem;
+
+}
+
+.question__image img{
+  max-height: 350px;
+  border-radius: 24px;
+}
+
+.option__image{
+  margin-top: 1.5rem;
+  height: 200px;
+}
+
+.option__image img{
+  height: 190px;
+  border-radius: 24px;
+}

@@ -1,6 +1,13 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {AnswerOption, PossibleResult, Question} from "../../shared/interfaces";
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {PossibleResult, Question} from "../../shared/interfaces";
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from "@angular/forms";
 import {QuestionsService} from "../../shared/services/questions.service";
 import {DesignService} from "../../shared/classes/design";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
@@ -20,11 +27,15 @@ import {ToastrService} from "ngx-toastr";
   templateUrl: './questions-form.component.html',
   styleUrl: './questions-form.component.css'
 })
-export class QuestionsFormComponent implements OnInit, AfterViewInit{
+export class QuestionsFormComponent implements OnInit, AfterViewInit {
 
   @Input('testId') testId: string;
+  @Input('processingType') processingType: string;
   @ViewChild('popup', {static: true}) popupRef!: ElementRef;
   @ViewChild('overlay', {static: true}) overlayRef!: ElementRef;
+  @ViewChild('questionImageInput') questionImageInputRef: ElementRef;
+  @ViewChildren('imageInput') imageInputs: QueryList<ElementRef>;
+
 
 
   questions: Question[] = [];
@@ -32,6 +43,10 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
   questionId: string | undefined = undefined;
   loading = false;
   form: FormGroup;
+  questionImage: File;
+  questionImagePreview: any;
+  answerOptionImages: File[] = []; // Создаем массив для хранения изображений вариантов ответов
+  answerOptionPreviews: any[] = [];
 
 
   constructor(private questionService: QuestionsService,
@@ -62,9 +77,9 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
     this.actualizePossibleResults()
     this.form.patchValue({
       question: question.text,
+      image: question.imageSrc
     });
-
-
+    this.questionImagePreview = question.imageSrc
 
     if (question._id !== undefined) {
       this.answerOptionService.fetch(question._id).subscribe({
@@ -78,10 +93,10 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
               text: [answerOption.text, Validators.required],
               possibleResult: [answerOption.possibleResultId, Validators.required],
               score: [answerOption.score, Validators.required],
-              _id: [answerOption._id]
+              _id: [answerOption._id],
+              imageSrc: [answerOption.imageSrc]
             });
-
-            // Добавляем FormGroup в FormArray
+            this.answerOptionPreviews.push(answerOption.imageSrc)
             answerOptionsFormArray.push(answerOptionGroup);
           }
           console.log('load complete')
@@ -103,6 +118,8 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
     (this.form.get('answerOptions') as FormArray).clear();
     this.actualizePossibleResults()
     this.questionId = undefined;
+    this.questionImagePreview = ''
+    this.answerOptionPreviews = []
     this.form.reset({
       name: null,
       description: null,
@@ -166,13 +183,46 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
 
   }
 
+  triggerClick() {
+    this.questionImageInputRef.nativeElement.click();
+  }
+
+  triggerClickAO(event: Event, index: number) {
+    const inputElement = this.imageInputs.toArray()[index].nativeElement;
+    inputElement.click();
+  }
+
+
+  onFileUpload(event: any) {
+    const file = event.target.files[0]
+    this.questionImage = file
+
+    const reader = new FileReader();
+
+    reader.onload = (event: Event) => {
+      this.questionImagePreview = reader.result
+    }
+
+    reader.readAsDataURL(file)
+  }
+
+  onImageSelected(event: any, index: number) {
+    if (event.target.files && event.target.files.length) {
+      const file = event.target.files[0];
+      this.answerOptionImages[index] = file; // Сохраняем изображение в массив
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.answerOptionPreviews[index] = reader.result; // Сохраняем предварительный просмотр изображения
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+
+
+
   onSubmit() {
     this.form.disable()
-
-    const newQuestion: Question = {
-      text: this.form.value.question,
-      testId: this.testId,
-    }
 
     const completed = () => {
       this.popupRef.nativeElement.classList.remove("active")
@@ -181,44 +231,57 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
     }
 
     const createOrUpdatePossibleResult = () => {
-      this.form.value.answerOptions.forEach((answerOption: any) => {
-
-        const newAnswerOption: AnswerOption = {
-          text: answerOption.text,
-          possibleResultId: answerOption.possibleResult,
-          score: answerOption.score,
-          questionId: this.questionId,
-          _id: answerOption._id
-        }
-
+      const answerOptionsFormArray = this.form.get('answerOptions') as FormArray;
+      answerOptionsFormArray.controls.forEach((control: AbstractControl<any>, index: number) => {
+        const answerOption = control.value;
+        const questionID = this.questionId ? this.questionId : '';
+        const image = this.answerOptionImages[index]; // Получаем изображение из массива
         if (answerOption._id) {
-          this.answerOptionService.update(newAnswerOption).subscribe({
-            next: answerOptions => {
-              this.toastr.success('Варіант відповіді оновлено успішно')
-              console.log('AnswerOption updated', answerOption)
+          this.answerOptionService.update(
+            answerOption._id,
+            answerOption.text,
+            questionID,
+            answerOption.possibleResult,
+            answerOption.score,
+            image // Передача изображения напрямую в метод update
+          ).subscribe({
+            next: updatedAnswerOption => {
+              this.toastr.success('Варіант відповіді оновлено успішно');
+              console.log('AnswerOption updated', updatedAnswerOption);
             },
             error: err => {
-              this.toastr.error(err)
+              this.toastr.error(err);
             }
-          })
+          });
         } else {
-          this.answerOptionService.create(newAnswerOption).subscribe({
-            next: answerOption => {
-              this.toastr.success('Варіат відповіді створено успішно')
-              // console.log('AnswerOption created', answerOption)
+          this.answerOptionService.create(
+            answerOption.text,
+            questionID,
+            answerOption.possibleResult,
+            answerOption.score,
+            image // Передача изображения напрямую в метод create
+          ).subscribe({
+            next: createdAnswerOption => {
+              this.toastr.success('Варіат відповіді створено успішно');
+              console.log('AnswerOption created', createdAnswerOption);
             },
             error: error => {
-              this.toastr.error(error)
+              this.toastr.error(error);
             }
-          })
+          });
         }
+      });
+    };
 
-      })
-    }
+
 
     if (this.questionId) {
-      newQuestion._id = this.questionId;
-      this.questionService.update(newQuestion).subscribe({
+      this.questionService.update(
+        this.questionId,
+        this.form.value.question,
+        this.testId,
+        this.questionImage
+      ).subscribe({
         next: question => {
           const index = this.questions.findIndex(p => p._id === question._id)
           this.questions[index] = question;
@@ -231,10 +294,9 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit{
         complete: () => completed()
       })
     } else {
-      this.questionService.create(newQuestion).subscribe({
+      this.questionService.create(this.form.value.question, this.testId, this.questionImage).subscribe({
         next: question => {
           this.toastr.success('Питання створено')
-          //console.log(question)
           this.questions.push(question)
           this.questionId = question._id
           createOrUpdatePossibleResult()

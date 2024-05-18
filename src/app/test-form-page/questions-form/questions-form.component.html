@@ -53,6 +53,16 @@
           </div>
         </div>
 
+        <div class="image-preview">
+          <img [src]="questionImagePreview" *ngIf="questionImagePreview">
+        </div>
+
+        <div class="image input-warp">
+          <input type="file" accept="image/*" class="image-input" (change)="onFileUpload($event)" #questionImageInput>
+          <button type="button" (click)="triggerClick()" class="imageBtn" [disabled]="form.disabled"><i class='bx bxs-image-add'></i>
+          </button>
+        </div>
+
         <div class="answer-options-container">
           <div formArrayName="answerOptions">
             <div class="answer-option-warp" *ngFor="let answerOption of answerOptions.controls; let i = index">
@@ -66,7 +76,7 @@
                   </div>
                 </div>
 
-                <div class="possible-result input-warp">
+                <div class="possible-result input-warp" *ngIf="processingType == 'many'">
                   <select class="select-field" formControlName="possibleResult" required>
                     <option *ngFor="let possibleResult of possibleResults" [ngValue]="possibleResult._id">{{ possibleResult.name }}</option>
                   </select>
@@ -78,7 +88,7 @@
                   </div>
                 </div>
 
-                <div class="input-warp">
+                <div class="input-warp" *ngIf="processingType != 'self'">
                   <input type="number" class="input-field" placeholder=" " formControlName="score" required>
                   <label class="input-label">Кількість балів</label>
                   <div *ngIf="answerOption.get('score')?.errors?.['required'] && answerOption.get('score')?.touched"
@@ -86,7 +96,14 @@
                   </div>
                 </div>
 
+                <input type="file" (change)="onImageSelected($event, i)" accept="image/*" class="image-input" #imageInput>
+
+
+                <button type="button" class="button" (click)="triggerClickAO($event, i)"><i class='bx bxs-image-add'></i></button>
                 <button type="button" class="delete-answer-btn" (click)="removeAnswerOption(i)">Видалити</button>
+              </div>
+              <div class="image-preview" *ngIf="answerOptionPreviews[i]">
+                <img [src]="answerOptionPreviews[i]" alt="Image Preview">
               </div>
             </div>
           </div>

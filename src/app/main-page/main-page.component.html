@@ -37,7 +37,7 @@
       <div class="popular__container swiper">
         <div class="swiper-wrapper">
           <article class="popular__card swiper-slide" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
-            <img [src]="apiUrl + test.imageSrc" class="popular__img">
+            <img [src]="test.imageSrc" class="popular__img">
 
             <div class="popular__data">
               <h2 class="popular__title">

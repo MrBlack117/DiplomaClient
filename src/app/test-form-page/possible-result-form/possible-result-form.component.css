@@ -81,6 +81,10 @@ form {
   border: 1px solid #bbbbbb;
 }
 
+.score{
+  position: relative;
+}
+
 .error-message-description{
   color: red;
   top: 15rem;
@@ -179,11 +183,6 @@ section.active .overlay {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.modal-box i {
-  font-size: 70px;
-  color: #4070f4;
-}
-
 .modal-box h2 {
   margin-top: 20px;
   font-size: 25px;
@@ -211,4 +210,16 @@ section.active .overlay {
 
 .image-input {
   display: none;
+}
+
+.mіnScore, .maxScore{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.check{
+  width: 4rem;
+  margin-top: 1rem;
+  margin-left: .5rem;
 }

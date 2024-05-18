@@ -7,7 +7,6 @@ import {QuestionsService} from "../shared/services/questions.service";
 import {AnswerOptionsService} from "../shared/services/answer-options.service";
 import {UserTestResultService} from "../shared/services/user-test-result.service";
 import {ToastrService} from "ngx-toastr";
-import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-test-page',
@@ -27,7 +26,6 @@ export class TestPageComponent implements OnInit {
   selectedOptions: AnswerOption[] = [];
   currentQuestionIndex: number = 0;
   progressPercent: number = 0
-  apiUrl = environment.apiUrl + '/';
 
   constructor(private testsService: TestsService,
               private questionService: QuestionsService,
@@ -100,41 +98,101 @@ export class TestPageComponent implements OnInit {
     const results: Result[] = []
     const answers: any[] = []
 
-    if (this.test.possibleResults !== undefined) {
-      const resultsMap: { [key: string]: number } = {};
 
-      this.test.possibleResults.forEach(possibleResultId => {
-        resultsMap[possibleResultId] = 0;
-      });
+    if (this.test.processingType === 'one') {
+      let testScore: number = 0;
 
-      for (const selectedOption of this.selectedOptions) {
-        answers.push(selectedOption._id)
-        const possibleResultId = selectedOption.possibleResultId;
-        resultsMap[possibleResultId] += selectedOption.score;
+      if (this.test.possibleResults !== undefined) {
+        for (const selectedOption of this.selectedOptions) {
+          answers.push(selectedOption._id)
+          const answerPoints = selectedOption.score;
+          if (answerPoints !== undefined) {
+            testScore += answerPoints;
+          }
+        }
+
       }
 
-      Object.entries(resultsMap).forEach(([possibleResultId, score]) => {
-        results.push({_id: possibleResultId, score});
-      });
+      const newUserTestResult: UserTestResult = {
+        test: this.test._id,
+        score: testScore,
+        answers: answers
+      };
 
-    }
+      this.userTestResultService.create(newUserTestResult).subscribe({
+          next: (response) => {
+            this.router.navigate([`/result/${response._id}`]);
+          },
+          error: (errorResponse) => {
+            this.toastr.error(errorResponse.error)
+          }
+        }
+      );
 
-    const newUserTestResult: UserTestResult = {
-      test: this.test._id,
-      results: results,
-      answers: answers
-    };
+    } else if (this.test.processingType === 'many') {
+      if (this.test.possibleResults !== undefined) {
+        const resultsMap: { [key: string]: number } = {};
 
+        this.test.possibleResults.forEach(possibleResultId => {
+          resultsMap[possibleResultId] = 0;
+        });
 
-    this.userTestResultService.create(newUserTestResult).subscribe({
-        next: (response) => {
-          this.router.navigate([`/result/${response._id}`]);
-        },
-        error: (errorResponse) => {
-          this.toastr.error(errorResponse.error)
+        for (const selectedOption of this.selectedOptions) {
+          answers.push(selectedOption._id)
+          const possibleResultId = selectedOption.possibleResultId;
+          const answerPoints = selectedOption.score;
+          if(possibleResultId !== undefined && answerPoints !== undefined) {
+            resultsMap[possibleResultId] += answerPoints;
+          }
+
+        }
+
+        Object.entries(resultsMap).forEach(([possibleResultId, score]) => {
+          results.push({_id: possibleResultId, score});
+        });
+
+      }
+
+      const newUserTestResult: UserTestResult = {
+        test: this.test._id,
+        results: results,
+        answers: answers
+      };
+
+      this.userTestResultService.create(newUserTestResult).subscribe({
+          next: (response) => {
+            this.router.navigate([`/result/${response._id}`]);
+          },
+          error: (errorResponse) => {
+            this.toastr.error(errorResponse.error)
+          }
+        }
+      );
+
+    } else if (this.test.processingType === 'self') {
+      if (this.test.possibleResults !== undefined) {
+        for (const selectedOption of this.selectedOptions) {
+          answers.push(selectedOption._id)
         }
       }
-    );
+
+      const newUserTestResult: UserTestResult = {
+        test: this.test._id,
+        answers: answers
+      };
+
+      this.userTestResultService.create(newUserTestResult).subscribe({
+          next: (response) => {
+            this.router.navigate([`/result/${response._id}`]);
+          },
+          error: (errorResponse) => {
+            this.toastr.error(errorResponse.error)
+          }
+        }
+      );
+    }
+
+
   }
 }
 

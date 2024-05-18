@@ -1,9 +1,7 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Message, PossibleResult} from "../interfaces";
-import {environment} from "../../../environments/environment";
-
+import {Message, PossibleResult, Test} from "../interfaces";
 
 @Injectable(
   {
@@ -12,23 +10,21 @@ import {environment} from "../../../environments/environment";
 )
 
 export class PossibleResultsService {
-  apiUrl = environment.apiUrl;
-
   constructor(private http: HttpClient) {
   }
 
   fetch(testId: string): Observable<PossibleResult[]> {
-    return this.http.get<PossibleResult[]>(`${this.apiUrl}/api/possibleResult/test/${testId}`)
+    return this.http.get<PossibleResult[]>(`/api/possibleResult/test/${testId}`)
   }
 
   get(id: string): Observable<PossibleResult> {
-    return this.http.get<PossibleResult>(`${this.apiUrl}/api/possibleResult/${id}`)
+    return this.http.get<PossibleResult>(`/api/possibleResult/${id}`)
   }
 
-  create(name: string, description: string, testId: string, image?: File, ) {
+  create(name: string, description: string, testId: string, image?: File, maxScore?: number, minScore?: number) {
     const fd = new FormData();
 
-    if (image){
+    if (image) {
       fd.append('image', image, image.name)
     }
 
@@ -36,13 +32,23 @@ export class PossibleResultsService {
     fd.append('description', description);
     fd.append('testId', testId);
 
-    return this.http.post<PossibleResult>(`${this.apiUrl}/api/possibleResult`, fd)
+
+    if (maxScore) {
+      fd.append('maxScore', maxScore.toString())
+    }
+
+    if (minScore) {
+      fd.append('minScore', minScore.toString())
+    }
+
+
+    return this.http.post<PossibleResult>(`/api/possibleResult`, fd)
   }
 
-  update(id: string, name: string, description: string, testId: string, image?: File) {
+  update(id: string, name: string, description: string, testId: string, image?: File, maxScore?: number, minScore?: number) {
     const fd = new FormData();
 
-    if (image){
+    if (image) {
       fd.append('image', image, image.name)
     }
 
@@ -50,10 +56,20 @@ export class PossibleResultsService {
     fd.append('description', description);
     fd.append('testId', testId)
 
-    return  this.http.patch<PossibleResult>(`${this.apiUrl}/api/possibleResult/${id}`, fd)
+
+
+    if (maxScore) {
+      fd.append('maxScore', maxScore.toString())
+    }
+
+    if (minScore) {
+      fd.append('minScore', minScore.toString())
+    }
+
+    return this.http.patch<PossibleResult>(`/api/possibleResult/${id}`, fd)
   }
 
   delete(possibleResult: PossibleResult): Observable<Message> {
-    return this.http.delete<Message>(`${this.apiUrl}/api/possibleResult/${possibleResult._id}`)
+    return this.http.delete<Message>(`/api/possibleResult/${possibleResult._id}`)
   }
 }

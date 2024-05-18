@@ -4,7 +4,6 @@ import {RouterLink} from "@angular/router";
 import {TestsService} from "../shared/services/tests.service";
 import {Test} from "../shared/interfaces";
 import {NgForOf} from "@angular/common";
-import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-main-page',
@@ -21,7 +20,7 @@ export class MainPageComponent implements AfterViewInit, OnInit {
   @ViewChild('accordionItems', {static: true}) accordionItemsRef!: ElementRef;
 
   popularTests: Test[] = []
-  apiUrl = environment.apiUrl + '/';
+
 
   constructor(private testsService: TestsService) {
   }

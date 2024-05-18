@@ -6,9 +6,9 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {NgClass, NgIf} from "@angular/common";
 import {TestsService} from "../shared/services/tests.service";
 import {Observable, of, switchMap} from "rxjs";
-import {Test} from "../shared/interfaces";
+import {PossibleResult, Test} from "../shared/interfaces";
 import {ToastrService} from "ngx-toastr";
-import {environment} from "../../environments/environment";
+
 
 @Component({
   selector: 'app-test-form-page',
@@ -32,9 +32,8 @@ export class TestFormPageComponent implements OnInit {
   image: File;
   imagePreview: any;
   isNew = true;
+  processingType: string = 'one'
   test: Test;
-  apiUrl = environment.apiUrl + '/';
-
 
   constructor(private route: ActivatedRoute, private testService: TestsService, private router: Router,
               private toastr: ToastrService) {
@@ -65,6 +64,7 @@ export class TestFormPageComponent implements OnInit {
           next: (test) => {
             if (test) {
               this.test = test
+              this.processingType = test.processingType
               this.form.patchValue({
                 name: test.name,
                 brief: test.brief,
@@ -101,16 +101,16 @@ export class TestFormPageComponent implements OnInit {
     reader.readAsDataURL(file)
   }
 
-  deleteTest(){
+  deleteTest() {
     const decision = window.confirm(`Ви впевнені, що хочете видалити тест ${this.test.name}?`)
 
-    if(decision){
+    if (decision) {
       this.testService.delete(this.test._id)
         .subscribe({
           next: response => {
             this.toastr.success(response.message)
           },
-          error: (errorResponse:any) => {
+          error: (errorResponse: any) => {
             this.toastr.error(errorResponse.error.message)
           },
           complete: () => {
@@ -120,13 +120,50 @@ export class TestFormPageComponent implements OnInit {
     }
   }
 
+
+  processingInfo(type: string) {
+    if (type === "one") {
+      this.toastr.info('У тесту є загальний лічильник і в залежності від обраної відповіді до нього додаються або\n' +
+        '                    віднімаються бали.\n' +
+        '                    Кожному можлимову результату потрібно виставити рамки балів. Після проходження тесту, користувач\n' +
+        '                    отримає\n' +
+        '                    результат в рамки якого потрапило значення лічильника балів тесту', 'Загальний лічильник', {
+        timeOut: 10000,
+        closeButton: true,
+        progressBar: true
+
+      })
+    } else if (type === "many") {
+      this.toastr.info('Кожен можливий результат маж свій лічильник балів. До кожного варіанту відповіді можна обрати\n' +
+        '                    можливий\n' +
+        '                    результат\n' +
+        '                    до якого будуть нараховуватися бали та кількість балів, що буде наразована. Після проходження тесту,\n' +
+        '                    користувач\n' +
+        '                    отримає результат, який набрав більше балів.', 'Окремі лічильники', {
+        timeOut: 15000,
+        closeButton: true,
+        progressBar: true
+
+      })
+    } else if (type === "self") {
+      this.toastr.info('Варіанти проходження не враховуються.' +
+        ' Ви зможете бачити відповіді користувачів, ' +
+        'і маєте проаналізувати їх самостійно.', 'Самостійний аналіз', {
+        timeOut: 15000,
+        closeButton: true,
+        progressBar: true
+
+      })
+    }
+  }
+
   onSubmit() {
     let obs: Observable<Test>;
     this.form.disable()
     if (this.isNew) {
-      obs = this.testService.create(this.form.value.name, this.form.value.brief, this.form.value.description, this.image)
+      obs = this.testService.create(this.form.value.name, this.form.value.brief, this.form.value.description, this.processingType, this.image)
     } else {
-      obs = this.testService.update(this.test._id, this.form.value.name, this.form.value.brief, this.form.value.description, this.image)
+      obs = this.testService.update(this.test._id, this.form.value.name, this.form.value.brief, this.form.value.description, this.processingType, this.image)
     }
     obs.subscribe({
       next: (test) => {

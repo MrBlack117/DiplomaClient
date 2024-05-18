@@ -10,7 +10,6 @@ import {CommentsService} from "../shared/services/comments.service";
 import {AuthService} from "../shared/services/auth.service";
 import {ToastrService} from "ngx-toastr";
 import {TestsService} from "../shared/services/tests.service";
-import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-test-result-page',
@@ -33,7 +32,7 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
   loading = false
   form: FormGroup;
   userReaction: string = ''
-  apiUrl = environment.apiUrl + '/';
+  processingType: string = ''
 
   @ViewChild('accordionItems', {static: true}) accordionItemsRef!: ElementRef;
 
@@ -59,37 +58,15 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
         this.userTestResultService.getById(params['id']).subscribe({
           next: (result: UserTestResult) => {
             this.userTestResult = result;
-            this.userTestResult.results.forEach((possibleResult) => {
-              this.possibleResultsService.get(possibleResult._id).subscribe({
-                next: (result: PossibleResult) => {
-                  const processedResult: ProcessedResult = {
-                    name: result.name,
-                    description: result.description,
-                    imageSrc: result.imageSrc,
-                    score: possibleResult.score
-                  };
-                  this.results.push(processedResult);
-                },
-                error: (err) => {
-                  this.toastr.error(err)
-                },
-                complete: () => {
-                  let bestScore = -1;
-                  if (this.results.length == this.userTestResult.results.length) {
-                    for (const r of this.results) {
-                      if (r.score > bestScore) {
-                        this.bestResult = r;
-                        bestScore = r.score;
-                      }
-                    }
-                    this.loading = false;
-                  }
+            this.testService.getById(result.test).subscribe({
+              next: (test) => {
+                this.processingType = test.processingType
+                this.processResults()
+                this.loadComments(result.test)
+                this.checkReaction()
+              }
+            })
 
-                }
-              });
-            });
-            this.loadComments(result.test)
-            this.checkReaction()
           },
           error: (err) => {
             this.toastr.error(err)
@@ -97,6 +74,85 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
         });
       }
     });
+
+  }
+
+  processResults() {
+    if (this.processingType === 'one') {
+      const score = this.userTestResult.score
+      if (score !== undefined) {
+         this.possibleResultsService.fetch(this.userTestResult.test).subscribe({
+          next: (results) => {
+            for (const result of results) {
+              const minScore = result.minScore
+              const maxScore = result.maxScore
+              if (minScore !== undefined && maxScore !== undefined) {
+                if (minScore < score && score < maxScore) {
+                  const processedResult: ProcessedResult = {
+                    name: result.name,
+                    description: result.description,
+                    imageSrc: result.imageSrc,
+                    score: score
+                  };
+                  this.bestResult = processedResult
+                }
+              }
+            }
+          },
+          error: err => {
+            this.toastr.error(err)
+          },
+          complete: () => {
+            this.loading = false;
+          }
+        })
+      }
+
+    } else if (this.processingType == 'many') {
+      const results = this.userTestResult.results
+      if (results !== undefined) {
+        results.forEach((possibleResult) => {
+          this.possibleResultsService.get(possibleResult._id).subscribe({
+            next: (result: PossibleResult) => {
+              const processedResult: ProcessedResult = {
+                name: result.name,
+                description: result.description,
+                imageSrc: result.imageSrc,
+                score: possibleResult.score
+              };
+              this.results.push(processedResult);
+            },
+            error: (err) => {
+              this.toastr.error(err)
+            },
+            complete: () => {
+              let bestScore = -1;
+              if (this.results.length == results.length) {
+                for (const r of this.results) {
+                  if (r.score > bestScore) {
+                    this.bestResult = r;
+                    bestScore = r.score;
+                  }
+                }
+                this.loading = false;
+              }
+
+            }
+          });
+        });
+      }
+
+    } else if (this.processingType === 'self') {
+      const processedResult: ProcessedResult = {
+        name: 'Дякуємо за проходження тесту!',
+        description: 'Ваші відповіді будуть проаналізовані психологом. Зверніться до нього для отримання результату.',
+        imageSrc: '',
+        score: 100
+      };
+      this.bestResult = processedResult
+      this.loading = false
+    }
+
 
   }
 
@@ -150,9 +206,6 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
         },
         error: err => {
           console.log(err)
-        },
-        complete: () => {
-          console.log(this.userReaction)
         }
       })
     }
@@ -160,15 +213,15 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
 
   addReaction(reaction: string) {
 
-      this.testService.addReaction(this.userTestResult.test, reaction).subscribe({
-        next: message => {
-          this.toastr.success('Дякуємо за Вашу оцінку!')
-        },
-        error: err => {
-          this.toastr.error(err)
-        }
-      })
-      this.userReaction = reaction
+    this.testService.addReaction(this.userTestResult.test, reaction).subscribe({
+      next: message => {
+        this.toastr.success('Дякуємо за Вашу оцінку!')
+      },
+      error: err => {
+        this.toastr.error(err)
+      }
+    })
+    this.userReaction = reaction
 
   }
 

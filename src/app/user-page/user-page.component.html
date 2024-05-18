@@ -6,6 +6,35 @@
 
 <div class="userContent" #userContent>
 
+  <div class="users-data" *ngIf="isAdmin">
+      <h2>Отримати інформацію по користувача</h2>
+      <form [formGroup]="form" (ngSubmit)="getUserInfo()">
+        <div class="form-group">
+          <div class="name input-warp">
+            <input
+              formControlName="email"
+              type="text"
+              class="input-field"
+              placeholder=" "
+              id="test-title"
+              [ngClass]="{'invalid' : form.get('email')?.invalid && form.get('email')?.touched}"
+            />
+            <label>email</label>
+            <div *ngIf="form.get('email')?.errors?.['required'] && form.get('email')?.touched"
+                 class="error-message-name">Поле обов'язкове для заповнення
+            </div>
+          </div>
+        </div>
+        <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Пошук</button>
+      </form>
+      <div *ngIf="userInfo" class="user-info">
+        <h3>Информация о пользователе:</h3>
+        <p>Email: {{ userInfo.email }}</p>
+        <p>Имя: {{ userInfo.name }}</p>
+        <!-- Добавьте дополнительные поля по мере необходимости -->
+      </div>
+  </div>
+
   <div class="testData">
 
     <div class="userHeader">
@@ -22,7 +51,7 @@
       <div class="tests">
         <div class="test" *ngFor="let test of completedTestsData">
           <p class="test-link" [routerLink]="['/result', test.resultId]">{{ test.test }}</p>
-          <p>{{test.date}}</p>
+          <p>{{ test.date }}</p>
         </div>
       </div>
     </div>
@@ -34,6 +63,7 @@
         <div class="test" *ngFor="let testData of createdTestsData">
           <p class="">{{ testData.test.name }}</p>
           <div class="icons">
+            <i class='bx bxs-user-detail' (click)="showUserTestResultsList(testData.test._id, testData.test.name)"></i>
             <i class='bx bx-stats' (click)="showStatistics(testData.test._id)"></i>
             <i class='bx bx-edit' routerLink="/test/edit/{{testData.test._id}}"></i>
             <i class='bx bx-trash' (click)="deleteTest(testData.test._id)"></i>
@@ -46,12 +76,12 @@
 
   <div class="testStatistics">
     <div *ngIf="showTestStatistics">
-      <h2>Статистика теста "{{ selectedTestName }}"</h2>
+      <h2>Статистика тесту "{{ selectedTestName }}"</h2>
 
       <div class="possible-results">
         <h3>Можливі результати:</h3>
         <div class="possible-result" *ngFor="let result of testResults">
-          {{ result.name }} - {{result.frequency}} ({{ result.percent.toFixed(2) }}%)
+          {{ result.name }} - {{ result.frequency }} ({{ result.percent.toFixed(2) }}%)
         </div>
       </div>
 
@@ -60,16 +90,50 @@
         <div class="answer-options" *ngFor="let question of testQuestions">
           <h4>{{ question.name }}</h4>
 
-            <div class="answer-option" *ngFor="let option of question.answerOptions">
-              {{ option.name }} - {{ option.frequency }} ({{ option.percent.toFixed(2) }}%)
-            </div>
+          <div class="answer-option" *ngFor="let option of question.answerOptions">
+            {{ option.name }} - {{ option.frequency }} ({{ option.percent.toFixed(2) }}%)
+          </div>
 
           <br>
         </div>
       </div>
     </div>
-    <button class="button" (click)="normalMode()">Назад</button>
+    <button class="button" (click)="backFromStatistics()">Назад</button>
   </div>
 
+  <div class="resultsList">
+    <div *ngIf="showResultsList">
+      <h2>Проходження тесту "{{ selectedTestName }}":</h2>
+      <div class="tests">
+        <div class="test" *ngFor="let result of resultsList">
+          <p class="test-link"
+             (click)="showUserAnswers(
+             result.testId, result.answers, selectedTestName,
+             {name: result.name, email: result.email} ,
+             result.date)">
+            {{ result.name }} {{ result.email }}
+          </p>
+          <p>{{ result.date }}</p>
+        </div>
+      </div>
+    </div>
+    <button class="button" (click)="backFromResults()">Назад</button>
+  </div>
+
+  <div class="user-answers">
+    <div class="answers-wrap" *ngIf="selectedResult">
+      <h2>Результьати тестування:</h2>
+      <p>Користувач: {{ selectedResult.user.name }}/{{ selectedResult.user.email }}.
+        Тест: {{ selectedResult.testName }}</p>
+      <div class="user-answers_question" *ngFor="let question of selectedResult.processedQuestions">
+        <h4 class="question-text">{{ question.text }}</h4>
+        <div class="answer-option" *ngFor="let answerOption of question.answerOptions">
+          <p>{{ answerOption.text }}</p>
+          <i class='bx bx-check-square' *ngIf="resultAnswers.includes(answerOption.id)"></i>
+        </div>
+      </div>
+    </div>
+    <button class="button" (click)="backFromAnswers()">Назад</button>
+  </div>
 </div>
 
