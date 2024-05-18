@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Message, UserTestResult} from "../interfaces";
+import {environment} from "../../../environments/environment";
 
 @Injectable(
   {
@@ -10,30 +11,31 @@ import {Message, UserTestResult} from "../interfaces";
 )
 
 export class UserTestResultService {
+  apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) {
   }
 
   fetch(testId: string): Observable<UserTestResult[]> {
-    return this.http.get<UserTestResult[]>(`/api/userTestResult/test/${testId}`)
+    return this.http.get<UserTestResult[]>(`${this.apiUrl}/api/userTestResult/test/${testId}`)
   }
 
   getById(id: string): Observable<UserTestResult> {
-    return this.http.get<UserTestResult>(`/api/userTestResult/${id}`)
+    return this.http.get<UserTestResult>(`${this.apiUrl}/api/userTestResult/${id}`)
   }
 
   getByUser(): Observable<UserTestResult[]> {
-    return this.http.get<UserTestResult[]>(`/api/userTestResult/user`)
+    return this.http.get<UserTestResult[]>(`${this.apiUrl}/api/userTestResult/user`)
   }
 
   create(userTestResult: UserTestResult): Observable<UserTestResult> {
-    return this.http.post<UserTestResult>('/api/userTestResult', userTestResult)
+    return this.http.post<UserTestResult>(`${this.apiUrl}/api/userTestResult`, userTestResult)
   }
 
   update(userTestResult: UserTestResult): Observable<UserTestResult> {
-    return this.http.patch<UserTestResult>(`/api/userTestResult/${userTestResult._id}`, userTestResult)
+    return this.http.patch<UserTestResult>(`${this.apiUrl}/api/userTestResult/${userTestResult._id}`, userTestResult)
   }
 
   delete(userTestResult: UserTestResult): Observable<Message> {
-    return this.http.delete<Message>(`/api/userTestResult/${userTestResult._id}`)
+    return this.http.delete<Message>(`${this.apiUrl}/api/userTestResult/${userTestResult._id}`)
   }
 }

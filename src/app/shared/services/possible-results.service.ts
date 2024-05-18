@@ -1,7 +1,8 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Message, PossibleResult, Test} from "../interfaces";
+import {Message, PossibleResult} from "../interfaces";
+import {environment} from "../../../environments/environment";
 
 @Injectable(
   {
@@ -10,15 +11,16 @@ import {Message, PossibleResult, Test} from "../interfaces";
 )
 
 export class PossibleResultsService {
+  apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) {
   }
 
   fetch(testId: string): Observable<PossibleResult[]> {
-    return this.http.get<PossibleResult[]>(`/api/possibleResult/test/${testId}`)
+    return this.http.get<PossibleResult[]>(`${this.apiUrl}/api/possibleResult/test/${testId}`)
   }
 
   get(id: string): Observable<PossibleResult> {
-    return this.http.get<PossibleResult>(`/api/possibleResult/${id}`)
+    return this.http.get<PossibleResult>(`${this.apiUrl}/api/possibleResult/${id}`)
   }
 
   create(name: string, description: string, testId: string, image?: File, maxScore?: number, minScore?: number) {
@@ -42,7 +44,7 @@ export class PossibleResultsService {
     }
 
 
-    return this.http.post<PossibleResult>(`/api/possibleResult`, fd)
+    return this.http.post<PossibleResult>(`${this.apiUrl}/api/possibleResult`, fd)
   }
 
   update(id: string, name: string, description: string, testId: string, image?: File, maxScore?: number, minScore?: number) {
@@ -66,10 +68,10 @@ export class PossibleResultsService {
       fd.append('minScore', minScore.toString())
     }
 
-    return this.http.patch<PossibleResult>(`/api/possibleResult/${id}`, fd)
+    return this.http.patch<PossibleResult>(`${this.apiUrl}/api/possibleResult/${id}`, fd)
   }
 
   delete(possibleResult: PossibleResult): Observable<Message> {
-    return this.http.delete<Message>(`/api/possibleResult/${possibleResult._id}`)
+    return this.http.delete<Message>(`${this.apiUrl}/api/possibleResult/${possibleResult._id}`)
   }
 }

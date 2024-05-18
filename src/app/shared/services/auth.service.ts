@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {User} from "../interfaces";
 import {HttpClient} from "@angular/common/http";
 import {Observable, tap} from "rxjs";
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -10,20 +11,21 @@ import {Observable, tap} from "rxjs";
 export class AuthService {
 
   private token: string = ''
+  apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {
   }
 
   getUserData(userId: string): Observable<User> {
-    return this.http.get<User>(`/api/auth/user/${userId}`)
+    return this.http.get<User>(`${this.apiUrl}/api/auth/user/${userId}`)
   }
 
   getUserByEmail(email: string): Observable<User> {
-    return this.http.get<User>(`/api/auth/user/email/${email}`)
+    return this.http.get<User>(`${this.apiUrl}/api/auth/user/email/${email}`)
   }
 
   register(user: User): Observable<{ result: object, token: string }> {
-    return this.http.post<{ result: object, token: string, userData: object }>('/api/auth/register', user).pipe(
+    return this.http.post<{ result: object, token: string, userData: object }>(`${this.apiUrl}/api/auth/register`, user).pipe(
       tap(({token, userData}) => {
         localStorage.setItem("auth-token", token);
         localStorage.setItem("user", JSON.stringify(userData));
@@ -33,7 +35,7 @@ export class AuthService {
   }
 
   login(user: User): Observable<{ token: string }> {
-    return this.http.post<{ token: string, userData: object }>('/api/auth/login', user)
+    return this.http.post<{ token: string, userData: object }>(`${this.apiUrl}/api/auth/login`, user)
       .pipe(
         tap(({token, userData}) => {
           localStorage.setItem("auth-token", token);
@@ -44,7 +46,7 @@ export class AuthService {
   }
 
   googleAuth(email: string, name: string) {
-    return this.http.post<{ token: string, userData: object }>('/api/auth/googleAuth', {email: email, name: name}).pipe(
+    return this.http.post<{ token: string, userData: object }>(`${this.apiUrl}/api/auth/googleAuth`, {email: email, name: name}).pipe(
       tap(({token, userData}) => {
         localStorage.setItem("auth-token", token);
         localStorage.setItem("user", JSON.stringify(userData));
