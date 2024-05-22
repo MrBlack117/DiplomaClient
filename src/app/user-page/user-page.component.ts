@@ -99,7 +99,7 @@ export class UserPageComponent implements OnInit {
                   month: '2-digit',
                   day: '2-digit'
                 });
-                this.completedTestsData.push({
+                this.completedTestsData.unshift({
                   test: test.name,
                   resultId: userTestResult._id,
                   date: formattedDate
@@ -121,7 +121,7 @@ export class UserPageComponent implements OnInit {
         for (const test of tests) {
           this.userTestResultService.fetch(test._id).subscribe({
             next: (testResults: UserTestResult[]) => {
-              this.createdTestsData.push({
+              this.createdTestsData.unshift({
                 test: test,
                 results: testResults
               })
@@ -398,7 +398,7 @@ export class UserPageComponent implements OnInit {
                     month: '2-digit',
                     day: '2-digit'
                   });
-                  userTestResultsList.push({
+                  userTestResultsList.unshift({
                     name: user.name,
                     email: user.email,
                     date: formattedDate,

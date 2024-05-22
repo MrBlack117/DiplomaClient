@@ -19,7 +19,7 @@
     <div class="completedTests">
       <h3>Пройдені тести: </h3>
       <div class="tests">
-        <div class="test" *ngFor="let test of completedTestsData.reverse()">
+        <div class="test" *ngFor="let test of completedTestsData">
           <p class="test-link" [routerLink]="['/result', test.resultId]">{{ test.test }}</p>
           <p>{{ test.date }}</p>
         </div>
@@ -75,7 +75,7 @@
     <div *ngIf="showResultsList">
       <h2>Проходження тесту "{{ selectedTestName }}":</h2>
       <div class="tests">
-        <div class="test" *ngFor="let result of resultsList.reverse()">
+        <div class="test" *ngFor="let result of resultsList">
           <p class="test-link"
              (click)="showUserAnswers(
              result.testId, result.answers, selectedTestName,
