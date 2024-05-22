@@ -11,7 +11,7 @@
           залиште позаду всі труднощі у розумінні себе.
         </p>
         <div class="home__button">
-          <button routerLink="/test/new" class="button">Створити тест</button> <!-- Пройти тести -->
+          <button routerLink="/tests" class="button">Пройти тестування</button> <!-- Пройти тести -->
         </div>
 
       </div>
@@ -37,7 +37,7 @@
       <div class="popular__container swiper">
         <div class="swiper-wrapper">
           <article class="popular__card swiper-slide" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
-            <img [src]="test.imageSrc" class="popular__img">
+            <img [src]="test.imageSrc" class="popular__img" alt="">
 
             <div class="popular__data">
               <h2 class="popular__title">
@@ -96,7 +96,6 @@
           </h2>
           <p class="psychology__description">
             Психологічні тести є ключовим інструментом для розуміння себе та своїх потреб.
-            Пройшовши тести та отримавши персоналізовану допомогу від психолога, ви зможете:
           </p>
         </div>
 
@@ -204,8 +203,7 @@
             Легко зв'язатися з нами<span>.</span>
           </h2>
           <p class="contact__description">
-            Є проблеми з розумінням себе? Потрібен вам гід у виборі вашого майбутнього дому? Чи
-            можливо вам потрібна консультація з питань психології? Просто зв'яжіться з нами.
+            Є проблеми з розумінням себе? Чи ви хочете створити власні тести? Просто зв'яжіться з нами.
           </p>
         </div>
 

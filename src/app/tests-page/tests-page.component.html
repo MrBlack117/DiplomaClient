@@ -7,9 +7,7 @@
       </h1>
       <p class="home__description">
         Ви екстраверт чи інтроверт? У вас високий традиційний IQ або емоційний IQ? Чи є у вас задатки
-        підприємця? Знайдіть відповіді на ці та інші питання за допомогою тесту Psychology Today. Всі наші
-        тести
-        містять 20 запитань і займають близько 3 хвилин на проходження.
+        підприємця? Знайдіть відповіді на ці та інші питання за допомогою тестів на Mental.
       </p>
     </div>
   </div>
@@ -88,14 +86,6 @@
     <h2 class="section__title">
       Усі тести<span>.</span>
     </h2>
-    <div class="test-categories">
-      <button type="button" class="test-categories__button active">All</button>
-      <button type="button" class="test-categories__button false">Personality</button>
-      <button type="button" class="test-categories__button false">Relationships</button>
-      <button type="button" class="test-categories__button false">Health</button>
-      <button type="button" class="test-categories__button false">Career</button>
-      <button type="button" class="test-categories__button false">IQ</button>
-    </div>
     <div class="all__container">
       <ul class="tests-list">
         <li class="test-listing" *ngFor="let test of tests" [routerLink]="['/test', test._id]">

@@ -1,0 +1,78 @@
+.logo {
+  padding-top: 2rem;
+  padding-left: 3rem;
+  cursor: pointer;
+}
+
+.users-data {
+  padding: 3rem 5rem 5rem;
+  max-height: 530px;
+  overflow: hidden;
+}
+
+.userHeader {
+  padding-bottom: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.back-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-search{
+  display: flex;
+  flex-direction: row;
+}
+
+.form-group{
+  min-width: 260px;
+  padding: 0 1rem;
+}
+
+.search-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  padding: 0.5rem;
+  background-color: #151111;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem ;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: .3s;
+}
+
+.search-button:hover{
+  background-color: #007aff;
+}
+
+.forms-warp{
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.user-search{
+  margin: 0;
+}
+
+.user-info{
+  margin-bottom: 2rem;
+}
+
+.user-info-wrap{
+  width: 260px
+}
+
+.input-field{
+
+}

@@ -3,7 +3,15 @@ import {DesignService} from "../../shared/classes/design";
 import {PossibleResultsService} from "../../shared/services/possible-results.service";
 import {PossibleResult} from "../../shared/interfaces";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
 import {ToastrService} from "ngx-toastr";
 
 @Component({
@@ -41,14 +49,16 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+    console.log(this.processingType)
+
     this.form = new FormGroup({
       name: new FormControl(null, [Validators.required]),
       description: new FormControl(null, [Validators.required]),
-      minScore: new FormControl(null, [Validators.required]),
-      maxScore: new FormControl(null, [Validators.required]),
+      minScore: new FormControl(null),
+      maxScore: new FormControl(null),
       isLowest: new FormControl(false),
       isHighest: new FormControl(false)
-    })
+    }, {validators: this.scoreValidator()})
 
 
     this.loading = true;
@@ -63,6 +73,32 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
     })
   }
 
+  scoreValidator(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+
+      if(this.processingType == 'many'){
+        return null
+      }
+
+      const minScore = formGroup.get('minScore')?.value;
+      const isLowest = formGroup.get('isLowest')?.value;
+      const maxScore = formGroup.get('maxScore')?.value;
+      const isHighest = formGroup.get('isHighest')?.value;
+
+      const errors: any = {};
+
+      if ((minScore === null || minScore === '') && !isLowest) {
+        errors.minScoreRequired = 'Minimum score is required';
+      }
+
+      if ((maxScore === null || maxScore === '') && !isHighest) {
+        errors.maxScoreRequired = 'Maximum score is required';
+      }
+
+      return Object.keys(errors).length > 0 ? errors : null;
+    };
+  }
+
   openModal(possibleResult: PossibleResult) {
     this.possibleResultId = possibleResult._id;
     this.imagePreview = possibleResult.imageSrc;
@@ -70,17 +106,21 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
     if (possibleResult.maxScore === Number.MAX_SAFE_INTEGER) {
       this.form.get('isHighest')?.setValue(true);
       this.form.get('maxScore')?.setValue('')
+      this.form.get('maxScore')?.disable()
     } else {
       this.form.get('isHighest')?.setValue(false);
       this.form.get('maxScore')?.setValue(possibleResult.maxScore);
+      this.form.get('maxScore')?.enable()
     }
 
     if (possibleResult.minScore === Number.MIN_SAFE_INTEGER) {
       this.form.get('isLowest')?.setValue(true);
       this.form.get('minScore')?.setValue('');
+      this.form.get('minScore')?.disable()
     } else {
       this.form.get('isLowest')?.setValue(false);
       this.form.get('minScore')?.setValue(possibleResult.minScore);
+      this.form.get('minScore')?.enable()
     }
 
     this.form.patchValue({
@@ -142,11 +182,6 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
   onSubmit() {
     this.form.disable()
 
-    if (this.form.invalid) {
-      this.toastr.error('Заповніть всі поля коректно');
-      return;
-    }
-
     let minScore: number;
     let maxScore: number;
     const isLowest = this.form.value.isLowest;
@@ -168,6 +203,7 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
     if (minScore !== null && maxScore !== null) {
       if (minScore >= maxScore) {
         this.toastr.error('Нижня границя має бути менше верхньої');
+        this.form.enable()
         return;
       }
 
@@ -193,6 +229,7 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
           const index = this.possibleResults.findIndex(p => p._id === possibleResult._id)
           this.possibleResults[index] = possibleResult;
           this.toastr.success('Можливий результат оновлено успішно')
+          this.scoreErrors = this.checkScoresCorrectness()
         },
         error: err => {
           this.toastr.error(err)
@@ -316,6 +353,17 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
     }
 
     return errors
+  }
+
+  onCheckBoxChange(event: any, controlName: string) {
+    const checked = event.target.checked;
+    const control = this.form.get(controlName);
+    if (checked) {
+      control?.setValue(null);
+      control?.disable();
+    } else {
+      control?.enable();
+    }
   }
 
   ngAfterViewInit() {

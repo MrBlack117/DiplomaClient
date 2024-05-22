@@ -9,8 +9,7 @@ import {AnswerOptionsService} from "../shared/services/answer-options.service";
 import {PossibleResultsService} from "../shared/services/possible-results.service";
 import {ToastrService} from "ngx-toastr";
 import {AuthService} from "../shared/services/auth.service";
-import {FormGroup, FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
-import {error} from "@angular/compiler-cli/src/transformers/util";
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 
 
 @Component({
@@ -32,7 +31,7 @@ export class UserPageComponent implements OnInit {
   createdTestsData: { test: Test, results: UserTestResult[] }[] = []
   resultsList: { name: string, email: string, date: string, answers: string[], testId: string }[] = []
   testsStatistics: Map<string, TestStatistics> = new Map<string, TestStatistics>();
-  isPsychologist: boolean = true
+  isPsychologist: boolean = false
   isAdmin:boolean = false
   showTestStatistics: boolean = false
   showResultsList: boolean = false
@@ -48,7 +47,7 @@ export class UserPageComponent implements OnInit {
     processedQuestions: { text: string, answerOptions: { id: string, text: string }[] }[]
   }
   form: FormGroup;
-  userInfo: any;
+
 
 
   @ViewChild('userContent', {static: true}) userContentRef!: ElementRef;
@@ -60,20 +59,30 @@ export class UserPageComponent implements OnInit {
               private answerOptionService: AnswerOptionsService,
               private authService: AuthService,
               private router: Router,
-              private toastr: ToastrService,
-              private formBuilder: FormBuilder) {
+              private toastr: ToastrService) {
   }
 
   ngOnInit() {
 
-    this.form = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]]
-    });
-
     const userData = localStorage.getItem('user');
-    if (userData !== null) {
+    const userId = localStorage.getItem('_id');
+
+    if (userData !== null && userId !== null) {
       this.user = JSON.parse(userData);
+      const id = JSON.parse(userId)
+      this.authService.getUserData(id).subscribe({
+        next: user => {
+          const role = user.role
+          if (role !== undefined) {
+            if (role == 'psychologist') this.isPsychologist = true
+            if (role == 'admin') this.isAdmin = true
+          }
+        }
+      })
     }
+
+
+
 
 
     this.userTestResultService.getByUser().subscribe({
@@ -134,7 +143,7 @@ export class UserPageComponent implements OnInit {
     })
   }
 
-  calculateStatistics() {
+  async calculateStatistics() {
     for (const testData of this.createdTestsData) {
       const testStats: TestStatistics = {
         testName: testData.test.name,
@@ -149,7 +158,7 @@ export class UserPageComponent implements OnInit {
 
 
       if (processingType === 'one') {
-        testStats.possibleResults = this.calculatePossibleResultsStatsOne(testPossibleResults, usersResults)
+        testStats.possibleResults = await this.calculatePossibleResultsStatsOne(testPossibleResults, usersResults)
       } else if (processingType === 'many') {
         testStats.possibleResults = this.calculatePossibleResultsStatsMany(testPossibleResults, usersResults)
       } else if (processingType === 'self') {
@@ -211,67 +220,64 @@ export class UserPageComponent implements OnInit {
     return possibleResults
   }
 
-  calculatePossibleResultsStatsOne(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]) {
-    const possibleResults: { name: string, frequency: number, percent: number }[] = []
-
+  async calculatePossibleResultsStatsOne(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]): Promise<{ name: string, frequency: number, percent: number }[]> {
+    const possibleResults: { name: string, frequency: number, percent: number }[] = [];
     const resultsFrequency = new Map<string, number>();
+
     if (testPossibleResults) {
       for (const possibleResult of testPossibleResults) {
         resultsFrequency.set(possibleResult, 0);
       }
     }
-    let resultsProcessed = 0
 
-    for (const userResult of usersResults) {
-      let bestResultId: string | undefined = '';
+    let resultsProcessed = 0;
+
+    const fetchPossibleResult = async (resultId: string) => {
+      return this.possibleResultsService.get(resultId).toPromise();
+    };
+
+    const userResultsPromises = usersResults.map(async userResult => {
       const score = userResult.score;
       if (score !== undefined && testPossibleResults !== undefined) {
         for (const result of testPossibleResults) {
-          this.possibleResultsService.get(result).subscribe({
-            next: possibleResultObj => {
-              const minScore = possibleResultObj.minScore;
-              const maxScore = possibleResultObj.maxScore;
-              if (minScore !== undefined && maxScore !== undefined) {
-                if (minScore < score && score < maxScore) {
-                  bestResultId = possibleResultObj._id;
-                  if (bestResultId !== undefined) {
-                    if (resultsFrequency.has(bestResultId)) {
-                      const currentValue = resultsFrequency.get(bestResultId);
-                      if (currentValue !== undefined) {
-                        resultsFrequency.set(bestResultId, currentValue + 1);
-                      }
-                    } else {
-                      resultsFrequency.set(bestResultId, 1);
-                    }
-                    resultsProcessed += 1
+          const possibleResultObj = await fetchPossibleResult(result);
+          const minScore = possibleResultObj?.minScore;
+          const maxScore = possibleResultObj?.maxScore;
+          if (minScore !== undefined && maxScore !== undefined) {
+            if (minScore < score && score < maxScore) {
+              const bestResultId = possibleResultObj?._id;
+              if (bestResultId !== undefined) {
+                if (resultsFrequency.has(bestResultId)) {
+                  const currentValue = resultsFrequency.get(bestResultId);
+                  if (currentValue !== undefined) {
+                    resultsFrequency.set(bestResultId, currentValue + 1);
                   }
+                } else {
+                  resultsFrequency.set(bestResultId, 1);
                 }
+                resultsProcessed += 1;
               }
-            },
-            error: err => {
-              this.toastr.error(err)
-            },
-            complete: () => {
-              const totalResults = usersResults.length;
-              if (resultsProcessed == totalResults)
-
-                for (const [resultId, frequency] of resultsFrequency.entries()) {
-                  const percent = (frequency / totalResults) * 100;
-
-                  this.possibleResultsService.get(resultId).subscribe({
-                    next: possibleResultObj => {
-                      possibleResults.push({name: possibleResultObj.name, frequency, percent});
-                    }
-                  })
-                }
             }
-          });
+          }
         }
       }
-    }
+    });
 
+    await Promise.all(userResultsPromises);
 
-    return possibleResults
+    const totalResults = usersResults.length;
+    const resultsPromises = Array.from(resultsFrequency.entries()).map(async ([resultId, frequency]) => {
+      const percent = (frequency / totalResults) * 100;
+      const possibleResultObj = await fetchPossibleResult(resultId);
+      if(possibleResultObj !== undefined){
+        possibleResults.push({ name: possibleResultObj.name, frequency, percent });
+      }
+
+    });
+
+    await Promise.all(resultsPromises);
+
+    return possibleResults;
   }
 
   calculateQuestionsStats(testId: string, usersResults: UserTestResult[]) {
@@ -467,22 +473,7 @@ export class UserPageComponent implements OnInit {
     this.userContentRef.nativeElement.classList.add('users-results-mode')
   }
 
-  getUserInfo() {
-    if (this.form.invalid) {
-      return;
-    }
 
-    const email = this.form.get('email')?.value;
-
-    this.authService.getUserByEmail(email).subscribe({
-      next: data => {
-        this.userInfo = data;
-      },
-      error: error => {
-        console.error('Error fetching user info:', error);
-      }
-    });
-  }
 
   logOut() {
     localStorage.removeItem('user')

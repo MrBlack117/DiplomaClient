@@ -19,7 +19,7 @@ export const loggerInterceptor: HttpInterceptorFn = (req, next) => {
       if(error.status === 401){
         router.navigateByUrl("/auth");
       }
-      return throwError(() => error);
+      return throwError(() => 'Будь ласка авторизуйтесь');
     })
   );
 

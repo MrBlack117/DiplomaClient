@@ -112,3 +112,7 @@ label {
 .dislike-btn:hover, .dislike{
   background: #f54d4d;
 }
+
+.hidden{
+  display: none;
+}

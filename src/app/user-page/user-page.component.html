@@ -3,37 +3,7 @@
   <h3>Mental</h3>
 </div>
 
-
 <div class="userContent" #userContent>
-
-  <div class="users-data" *ngIf="isAdmin">
-      <h2>Отримати інформацію по користувача</h2>
-      <form [formGroup]="form" (ngSubmit)="getUserInfo()">
-        <div class="form-group">
-          <div class="name input-warp">
-            <input
-              formControlName="email"
-              type="text"
-              class="input-field"
-              placeholder=" "
-              id="test-title"
-              [ngClass]="{'invalid' : form.get('email')?.invalid && form.get('email')?.touched}"
-            />
-            <label>email</label>
-            <div *ngIf="form.get('email')?.errors?.['required'] && form.get('email')?.touched"
-                 class="error-message-name">Поле обов'язкове для заповнення
-            </div>
-          </div>
-        </div>
-        <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Пошук</button>
-      </form>
-      <div *ngIf="userInfo" class="user-info">
-        <h3>Информация о пользователе:</h3>
-        <p>Email: {{ userInfo.email }}</p>
-        <p>Имя: {{ userInfo.name }}</p>
-        <!-- Добавьте дополнительные поля по мере необходимости -->
-      </div>
-  </div>
 
   <div class="testData">
 
@@ -49,17 +19,16 @@
     <div class="completedTests">
       <h3>Пройдені тести: </h3>
       <div class="tests">
-        <div class="test" *ngFor="let test of completedTestsData">
+        <div class="test" *ngFor="let test of completedTestsData.reverse()">
           <p class="test-link" [routerLink]="['/result', test.resultId]">{{ test.test }}</p>
           <p>{{ test.date }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Раздел созданных тестов -->
-    <div class="createdTests">
+    <div class="createdTests" *ngIf="isPsychologist || isAdmin">
       <h3>Створені тести: </h3>
-      <div class="tests">
+      <div class="tests created">
         <div class="test" *ngFor="let testData of createdTestsData">
           <p class="">{{ testData.test.name }}</p>
           <div class="icons">
@@ -70,6 +39,7 @@
           </div>
         </div>
       </div>
+      <div class="test-add" routerLink = "/test/new"> <i class='bx bx-list-plus'></i></div>
     </div>
 
   </div>
@@ -78,7 +48,7 @@
     <div *ngIf="showTestStatistics">
       <h2>Статистика тесту "{{ selectedTestName }}"</h2>
 
-      <div class="possible-results">
+      <div class="possible-results" *ngIf="testResults.length > 0">
         <h3>Можливі результати:</h3>
         <div class="possible-result" *ngFor="let result of testResults">
           {{ result.name }} - {{ result.frequency }} ({{ result.percent.toFixed(2) }}%)
@@ -105,7 +75,7 @@
     <div *ngIf="showResultsList">
       <h2>Проходження тесту "{{ selectedTestName }}":</h2>
       <div class="tests">
-        <div class="test" *ngFor="let result of resultsList">
+        <div class="test" *ngFor="let result of resultsList.reverse()">
           <p class="test-link"
              (click)="showUserAnswers(
              result.testId, result.answers, selectedTestName,
@@ -135,5 +105,10 @@
     </div>
     <button class="button" (click)="backFromAnswers()">Назад</button>
   </div>
+</div>
+
+<div class="back-button">
+  <button class="button" routerLink="/"><i class='bx bx-home-alt-2' ></i></button>
+  <button class="button" *ngIf="isAdmin" routerLink="/admin"><i class='bx bxs-user-circle'></i></button>
 </div>
 

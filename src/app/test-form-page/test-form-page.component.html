@@ -6,7 +6,7 @@
       <div class="home__images">
 
         <div class="home__img">
-          <img [src]="imagePreview" *ngIf="imagePreview">
+          <img [src]="imagePreview" *ngIf="imagePreview" alt="">
         </div>
 
       </div>
@@ -63,7 +63,7 @@
               </div>
             </div>
 
-            <div class="processingChoice">
+            <div class="processingChoice" *ngIf="isNew">
               <h3>Оберіть тип обробки результатів</h3>
               <div class="types">
 
@@ -115,7 +115,7 @@
   </section>
 
   <app-possible-result-form
-    *ngIf="test"
+    *ngIf="test && this.processingType !='self'"
     [testId]="test._id"
     [processingType]="processingType">
   </app-possible-result-form>

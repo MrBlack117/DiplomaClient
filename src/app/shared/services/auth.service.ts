@@ -25,9 +25,10 @@ export class AuthService {
   }
 
   register(user: User): Observable<{ result: object, token: string }> {
-    return this.http.post<{ result: object, token: string, userData: object }>(`${this.apiUrl}/api/auth/register`, user).pipe(
-      tap(({token, userData}) => {
+    return this.http.post<{ result: object, token: string, _id:string, userData: object }>(`${this.apiUrl}/api/auth/register`, user).pipe(
+      tap(({token, _id, userData}) => {
         localStorage.setItem("auth-token", token);
+        localStorage.setItem("_id", JSON.stringify(_id));
         localStorage.setItem("user", JSON.stringify(userData));
         this.setToken(token);
       })
@@ -35,10 +36,11 @@ export class AuthService {
   }
 
   login(user: User): Observable<{ token: string }> {
-    return this.http.post<{ token: string, userData: object }>(`${this.apiUrl}/api/auth/login`, user)
+    return this.http.post<{ token: string, _id:string, userData: object }>(`${this.apiUrl}/api/auth/login`, user)
       .pipe(
-        tap(({token, userData}) => {
+        tap(({token, _id, userData}) => {
           localStorage.setItem("auth-token", token);
+          localStorage.setItem("_id", JSON.stringify(_id));
           localStorage.setItem("user", JSON.stringify(userData));
           this.setToken(token);
         })
@@ -46,13 +48,18 @@ export class AuthService {
   }
 
   googleAuth(email: string, name: string) {
-    return this.http.post<{ token: string, userData: object }>(`${this.apiUrl}/api/auth/googleAuth`, {email: email, name: name}).pipe(
-      tap(({token, userData}) => {
+    return this.http.post<{ token: string, _id:string, userData: object }>(`${this.apiUrl}/api/auth/googleAuth`, {email: email, name: name}).pipe(
+      tap(({token, _id, userData}) => {
         localStorage.setItem("auth-token", token);
+        localStorage.setItem("_id", JSON.stringify(_id))
         localStorage.setItem("user", JSON.stringify(userData));
         this.setToken(token);
       })
     )
+  }
+
+  updateUser(user: User): Observable<User> {
+   return  this.http.patch<User>(`${this.apiUrl}/api/auth/update/${user._id}`, user)
   }
 
   setToken(token: string) {

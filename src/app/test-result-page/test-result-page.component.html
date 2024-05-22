@@ -14,7 +14,7 @@
     <div class="home__images">
 
       <div class="test-result__img">
-        <img [src]="bestResult.imageSrc">
+        <img [src]="bestResult.imageSrc" alt="">
       </div>
     </div>
   </div>
@@ -26,12 +26,12 @@
 
 </section>
 
-<section class="all-results-section section">
+<section class="all-results-section section" [ngClass]="{'hidden': processingType !== 'many'}">
   <div class="container">
     <h2>Перегляньте свої результати</h2>
     <h3>Дізнайтесь детальні характеристики проходження</h3>
 
-    <div class="psychology__accordion " #accordionItems>
+    <div class="psychology__accordion " #accordionItems >
       <div class="psychology__accordion-item">
         <header class="psychology__accordion-header">
           <i class="bx bxs-check-shield psychology__accordion-icon"></i>
@@ -46,7 +46,7 @@
         <div class="psychology__accordion-content">
           <div class="possible-result" *ngFor="let possibleResult of results">
             <div class="psychology__accordion-image">
-              <img [src]="possibleResult.imageSrc">
+              <img [src]="possibleResult.imageSrc" alt="">
             </div>
 
             <div class="psychology__accordion-text">

@@ -15,7 +15,6 @@
 }
 
 .userHeader {
-  padding-top: 2rem;
   padding-bottom: 2rem;
   display: flex;
   flex-direction: row;
@@ -28,8 +27,12 @@
 
 .tests {
   padding-bottom: 2rem;
-  max-height: 15vh;
+  max-height: 8rem;
   overflow: auto;
+}
+
+.created{
+  padding-bottom: 0rem;
 }
 
 .users-results-mode .tests{
@@ -39,7 +42,7 @@
   overflow: auto;
 }
 
-.test {
+.test, .test-add {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -48,6 +51,13 @@
   border-radius: 1rem;
   margin-top: 0.5rem;
   color: var(--text-color);
+}
+
+.test-add{
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .test-link{
@@ -60,7 +70,7 @@
   cursor: pointer;
 }
 
-.test:hover {
+.test:hover, .test-add:hover {
   background: var(--container-color);
 }
 
@@ -180,16 +190,15 @@
 }
 
 .possible-results{
-  max-height: 15rem;
+  max-height: 10rem;
   overflow: auto;
   margin-bottom: 2rem;
 }
 
 
 .questions{
-  max-height: 15rem;
+  max-height: 10rem;
   overflow: auto;
-  margin-bottom: 2rem;
 }
 
 .user-answers_question{
@@ -204,3 +213,10 @@
 .answers-wrap{
   margin-bottom: 2rem;
 }
+
+.back-button{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+

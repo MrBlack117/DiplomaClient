@@ -1,0 +1,65 @@
+<div class="logo" routerLink="/">
+  <i class='bx bxs-brain'></i>
+  <h3>Mental</h3>
+</div>
+
+
+<div class="users-data" *ngIf="isAdmin">
+  <h2 class="userHeader">Отримати інформацію про користувача</h2>
+  <div class="forms-warp">
+    <form [formGroup]="form" (ngSubmit)="getUserInfo()" class="user-search">
+      <div class="form-group">
+        <div class="name input-warp">
+          <input
+            formControlName="email"
+            type="text"
+            class="input-field"
+            placeholder=" "
+            id="test-title"
+            [ngClass]="{'invalid' : form.get('email')?.invalid && form.get('email')?.touched}"
+          />
+          <label>email</label>
+          <div *ngIf="form.get('email')?.errors?.['required'] && form.get('email')?.touched"
+               class="error-message">Поле обов'язкове для заповнення
+          </div>
+        </div>
+      </div>
+      <button type="submit" [disabled]="form.invalid" class="search-button"><i class='bx bx-search'></i></button>
+    </form>
+
+    <div class="user-info-wrap" *ngIf="userInfo">
+      <div class="user-info">
+        <h3>Дані користувача:</h3>
+        <p>Email: {{ userInfo.email }}</p>
+        <p>Ім'я: {{ userInfo.name }}</p>
+        <p>Роль: {{ userInfo.role }}</p>
+      </div>
+
+      <div class="role-form-container">
+        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+
+          <div class="possible-result input-warp">
+            <select class="select-field" formControlName="role" required>
+              <option value="user">Користувач</option>
+              <option value="psychologist">Психолог</option>
+              <option value="admin">Адміністратор</option>
+            </select>
+
+            <label class="input-label" id="select-label">Оберіть нову роль користувача</label>
+            <div
+              *ngIf="roleForm.get('role')?.errors?.['required'] && roleForm.get('possibleResult')?.touched"
+              class="error-message">Оберіть варіант
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Зберегти</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="back-button">
+  <button class="button" routerLink="/">На головну</button>
+</div>

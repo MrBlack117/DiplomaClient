@@ -37,7 +37,6 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
   @ViewChildren('imageInput') imageInputs: QueryList<ElementRef>;
 
 
-
   questions: Question[] = [];
   possibleResults: PossibleResult[] = [];
   questionId: string | undefined = undefined;
@@ -192,7 +191,6 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
     inputElement.click();
   }
 
-
   onFileUpload(event: any) {
     const file = event.target.files[0]
     this.questionImage = file
@@ -218,62 +216,45 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
-
   onSubmit() {
     this.form.disable()
 
-    const completed = () => {
-      this.popupRef.nativeElement.classList.remove("active")
-      this.form.reset()
+    const answerOptionsFormArray = this.form.get('answerOptions') as FormArray;
+    if (answerOptionsFormArray.length < 2) {
+      this.toastr.error("Додайте принаймні 2 варіанти відповіді")
       this.form.enable()
+      return
     }
 
-    const createOrUpdatePossibleResult = () => {
-      const answerOptionsFormArray = this.form.get('answerOptions') as FormArray;
-      answerOptionsFormArray.controls.forEach((control: AbstractControl<any>, index: number) => {
-        const answerOption = control.value;
-        const questionID = this.questionId ? this.questionId : '';
-        const image = this.answerOptionImages[index]; // Получаем изображение из массива
-        if (answerOption._id) {
-          this.answerOptionService.update(
-            answerOption._id,
-            answerOption.text,
-            questionID,
-            answerOption.possibleResult,
-            answerOption.score,
-            image // Передача изображения напрямую в метод update
-          ).subscribe({
-            next: updatedAnswerOption => {
-              this.toastr.success('Варіант відповіді оновлено успішно');
-              console.log('AnswerOption updated', updatedAnswerOption);
-            },
-            error: err => {
-              this.toastr.error(err);
-            }
-          });
-        } else {
-          this.answerOptionService.create(
-            answerOption.text,
-            questionID,
-            answerOption.possibleResult,
-            answerOption.score,
-            image // Передача изображения напрямую в метод create
-          ).subscribe({
-            next: createdAnswerOption => {
-              this.toastr.success('Варіат відповіді створено успішно');
-              console.log('AnswerOption created', createdAnswerOption);
-            },
-            error: error => {
-              this.toastr.error(error);
-            }
-          });
+    let allFieldsCorrect = true
+
+    answerOptionsFormArray.controls.forEach((control: AbstractControl<any>, index: number) => {
+      const answerOption = control.value;
+
+
+      if (this.processingType == 'many') {
+        if (answerOption.possibleResult == '' || answerOption.score == null || answerOption.text == '') {
+          allFieldsCorrect = false
+          return
         }
-      });
-    };
+      } else if (this.processingType == 'one') {
+        if (answerOption.score == null || answerOption.text == '') {
+          allFieldsCorrect = false
+          return;
+        }
+      } else if (this.processingType == 'self') {
+        if (answerOption.text == '') {
+          allFieldsCorrect = false
+          return;
+        }
+      }
+    })
 
-
+    if (!allFieldsCorrect) {
+      this.toastr.error('Заповніть всі поля варіантів відповдей')
+      this.form.enable()
+      return;
+    }
 
     if (this.questionId) {
       this.questionService.update(
@@ -286,7 +267,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
           const index = this.questions.findIndex(p => p._id === question._id)
           this.questions[index] = question;
           this.toastr.success('Питання оновлено успішно')
-          createOrUpdatePossibleResult()
+          createOrUpdateAnswerOption()
         },
         error: err => {
           this.toastr.error(err)
@@ -299,7 +280,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
           this.toastr.success('Питання створено')
           this.questions.push(question)
           this.questionId = question._id
-          createOrUpdatePossibleResult()
+          createOrUpdateAnswerOption()
         },
         error: err => {
           this.toastr.error(err)
@@ -309,8 +290,54 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
 
     }
 
-  }
+    const createOrUpdateAnswerOption = () => { //Проверь в этом методе все ли поля заполнены
+      const answerOptionsFormArray = this.form.get('answerOptions') as FormArray;
+      answerOptionsFormArray.controls.forEach((control: AbstractControl<any>, index: number) => {
+        const answerOption = control.value;
+        const questionID = this.questionId ? this.questionId : '';
+        const image = this.answerOptionImages[index];
 
+        if (answerOption._id) {
+          this.answerOptionService.update(
+            answerOption._id,
+            answerOption.text,
+            questionID,
+            answerOption.possibleResult,
+            answerOption.score,
+            image
+          ).subscribe({
+            next: updatedAnswerOption => {
+              this.toastr.success('Варіант відповіді оновлено успішно');
+            },
+            error: err => {
+              this.toastr.error(err);
+            }
+          });
+        } else {
+          this.answerOptionService.create(
+            answerOption.text,
+            questionID,
+            answerOption.possibleResult,
+            answerOption.score,
+            image
+          ).subscribe({
+            next: createdAnswerOption => {
+              this.toastr.success('Варіант відповіді створено успішно');
+            },
+            error: error => {
+              this.toastr.error(error);
+            }
+          });
+        }
+      });
+    };
+
+    const completed = () => {
+      this.popupRef.nativeElement.classList.remove("active")
+      this.form.reset()
+      this.form.enable()
+    }
+  }
 
   ngAfterViewInit() {
     DesignService.modalInit(this.popupRef, this.overlayRef)

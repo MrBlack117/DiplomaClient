@@ -4,7 +4,7 @@
   <div class="container">
 
     <div class="heading">
-      <h2>Варіанти проходження:</h2>
+      <h2>Можливі результати:</h2>
     </div>
 
     <div class="scoresCorrectnessMessage" *ngIf="scoreErrors && processingType == 'one'">
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div class="mіnScore" *ngIf="processingType == 'one'">
+      <div class="mіnScore" *ngIf="this.processingType == 'one'">
         <div class="mіnScore input-warp" >
           <input
             formControlName="minScore"
@@ -93,7 +93,7 @@
           <label>Нижня межа балів</label>
         </div>
         <div class="check">
-          <input type="checkbox" formControlName="isLowest">
+          <input type="checkbox" formControlName="isLowest" (change)="onCheckBoxChange($event, 'minScore')">
           <i class='bx bx-minus'></i><i class='bx bx-infinite'></i>
         </div>
       </div>
@@ -109,14 +109,14 @@
           <label>Верхня межа балів</label>
         </div>
         <div class="check">
-          <input type="checkbox" formControlName="isHighest">
+          <input type="checkbox" formControlName="isHighest" (change)="onCheckBoxChange($event, 'maxScore')">
           <i class='bx bx-plus'></i><i class='bx bx-infinite'></i>
         </div>
       </div>
 
 
       <div class="image-preview">
-        <img [src]="imagePreview" *ngIf="imagePreview">
+        <img [src]="imagePreview" *ngIf="imagePreview" alt="">
       </div>
 
       <div class="image input-warp">
@@ -127,7 +127,7 @@
       </div>
 
       <div class="buttons">
-        <button type="submit" class="close-btn" [disabled]="form.disabled">Додати варіант проходження</button>
+        <button type="submit" class="close-btn" [disabled]="form.invalid || form.disabled">Зберегти можливий результат</button>
       </div>
     </form>
 

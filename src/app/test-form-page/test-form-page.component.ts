@@ -6,7 +6,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {NgClass, NgIf} from "@angular/common";
 import {TestsService} from "../shared/services/tests.service";
 import {Observable, of, switchMap} from "rxjs";
-import {PossibleResult, Test} from "../shared/interfaces";
+import {Test} from "../shared/interfaces";
 import {ToastrService} from "ngx-toastr";
 
 
@@ -120,7 +120,6 @@ export class TestFormPageComponent implements OnInit {
     }
   }
 
-
   processingInfo(type: string) {
     if (type === "one") {
       this.toastr.info('У тесту є загальний лічильник і в залежності від обраної відповіді до нього додаються або\n' +
@@ -134,10 +133,10 @@ export class TestFormPageComponent implements OnInit {
 
       })
     } else if (type === "many") {
-      this.toastr.info('Кожен можливий результат маж свій лічильник балів. До кожного варіанту відповіді можна обрати\n' +
+      this.toastr.info('Кожен можливий результат має свій лічильник балів. До кожного варіанту відповіді можна обрати\n' +
         '                    можливий\n' +
         '                    результат\n' +
-        '                    до якого будуть нараховуватися бали та кількість балів, що буде наразована. Після проходження тесту,\n' +
+        '                    до якого будуть нараховуватися бали та кількість балів, що буде нарахована. Після проходження тесту,\n' +
         '                    користувач\n' +
         '                    отримає результат, який набрав більше балів.', 'Окремі лічильники', {
         timeOut: 15000,
@@ -170,6 +169,7 @@ export class TestFormPageComponent implements OnInit {
         this.test = test
         this.toastr.success('Тест успішно збережено')
         this.form.enable()
+        this.router.navigate([`/test/edit/${test._id}`])
       },
       error: (errorResponse: any) => {
         this.toastr.error(errorResponse.error.message)
