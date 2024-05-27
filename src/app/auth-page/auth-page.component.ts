@@ -1,14 +1,12 @@
 import {Component, ElementRef, ViewChild, AfterViewInit, OnInit, OnDestroy} from '@angular/core';
 import {DesignService} from "../shared/classes/design";
-import {FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule} from "@angular/forms";
+import {FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule, AbstractControl} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {AuthService} from "../shared/services/auth.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router, RouterLink} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
 import {GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
-
-
 
 
 @Component({
@@ -37,10 +35,11 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
     })
 
     this.signUpForm = new FormGroup({
-      signUpName: new FormControl(null, [Validators.required]),
-      signUpEmail: new FormControl(null, [Validators.required, Validators.email]),
-      signUpPassword: new FormControl(null, [Validators.required, Validators.minLength(6)])
-    })
+      signUpName: new FormControl('', Validators.required),
+      signUpEmail: new FormControl('', [Validators.required, Validators.email]),
+      signUpPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      signUpPasswordConfirm: new FormControl('', [Validators.required, Validators.minLength(6)])
+    }, { validators: this.passwordMatchValidator });
 
     this.route.queryParams.subscribe((params: Params) => {
       if (params['registered']) {
@@ -69,6 +68,15 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
+  passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const password = control.get('signUpPassword');
+    const confirmPassword = control.get('signUpPasswordConfirm');
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      return { 'passwordMismatch': true };
+    }
+    return null;
+  }
+
   ngAfterViewInit() {
     DesignService.authToggle(this.innerBoxRef);
   }
@@ -76,33 +84,33 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
   signInSubmit() {
     this.signInForm.disable()
     this.subDef = this.auth.login(this.signInForm.value).subscribe({
-        next: () => {
-          this.toastr.success('Авторизація успішна!')
-          this.router.navigate(['/main'])
-        },
-        error: (errorResponse: any) => {
-          this.toastr.error(errorResponse.error.message, 'Помилка')
-          this.signInForm.enable()
-        }
-      })
+      next: () => {
+        this.toastr.success('Авторизація успішна!')
+        this.router.navigate(['/main'])
+      },
+      error: (errorResponse: any) => {
+        this.toastr.error(errorResponse.error.message, 'Помилка')
+        this.signInForm.enable()
+      }
+    })
   }
 
   signUpSubmit() {
-    this.signUpForm.disable()
+    this.signUpForm.disable();
     this.subDef = this.auth.register(this.signUpForm.value).subscribe({
       next: () => {
-        this.toastr.success('Аккаунт створено, успішно.')
+        this.toastr.success('Аккаунт створено, успішно.');
         this.router.navigate(['/main'], {
           queryParams: {
             registered: true
           }
-        })
+        });
       },
       error: (errorResponse: any) => {
-        this.toastr.error(errorResponse.error.message, 'Помилка')
-        this.signUpForm.enable()
+        this.toastr.error(errorResponse.error.message, 'Помилка');
+        this.signUpForm.enable();
       }
-    })
+    });
   }
 
   ngOnDestroy() {

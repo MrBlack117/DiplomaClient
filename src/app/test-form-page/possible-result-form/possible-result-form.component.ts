@@ -76,7 +76,7 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
   scoreValidator(): ValidatorFn {
     return (formGroup: AbstractControl): ValidationErrors | null => {
 
-      if(this.processingType == 'many'){
+      if (this.processingType == 'many') {
         return null
       }
 
@@ -181,33 +181,32 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
 
   onSubmit() {
     this.form.disable()
+    let minScore = this.form.value.minScore;
+    let maxScore = this.form.value.maxScore;
 
-    let minScore: number;
-    let maxScore: number;
-    const isLowest = this.form.value.isLowest;
-    const isHighest = this.form.value.isHighest;
+    if (this.processingType == 'one') {
 
+      const isLowest = this.form.value.isLowest;
+      const isHighest = this.form.value.isHighest;
 
-    if (isLowest) {
-      minScore = Number.MIN_SAFE_INTEGER
-    } else {
-      minScore = this.form.value.minScore;
-    }
-
-    if (isHighest) {
-      maxScore = Number.MAX_SAFE_INTEGER
-    } else {
-      maxScore = this.form.value.maxScore;
-    }
-
-    if (minScore !== null && maxScore !== null) {
-      if (minScore >= maxScore) {
-        this.toastr.error('Нижня границя має бути менше верхньої');
-        this.form.enable()
-        return;
+      if (isLowest) {
+        minScore = Number.MIN_SAFE_INTEGER
       }
 
+      if (isHighest) {
+        maxScore = Number.MAX_SAFE_INTEGER
+      }
+
+      if (minScore !== null && maxScore !== null) {
+        if (minScore >= maxScore) {
+          this.toastr.error('Нижня границя має бути менше верхньої');
+          this.form.enable()
+          return;
+        }
+
+      }
     }
+
 
     const completed = () => {
       this.popupRef.nativeElement.classList.remove("active")

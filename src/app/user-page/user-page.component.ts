@@ -244,7 +244,7 @@ export class UserPageComponent implements OnInit {
           const minScore = possibleResultObj?.minScore;
           const maxScore = possibleResultObj?.maxScore;
           if (minScore !== undefined && maxScore !== undefined) {
-            if (minScore < score && score < maxScore) {
+            if (minScore < score && score <= maxScore) {
               const bestResultId = possibleResultObj?._id;
               if (bestResultId !== undefined) {
                 if (resultsFrequency.has(bestResultId)) {

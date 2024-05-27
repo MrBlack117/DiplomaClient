@@ -87,7 +87,7 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
               const minScore = result.minScore
               const maxScore = result.maxScore
               if (minScore !== undefined && maxScore !== undefined) {
-                if (minScore < score && score < maxScore) {
+                if (minScore < score && score <= maxScore) {
                   const processedResult: ProcessedResult = {
                     name: result.name,
                     description: result.description,

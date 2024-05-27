@@ -58,7 +58,7 @@
       <div class="heading">
         <h2>Зареєструйтесь</h2>
         <h6>Вже зареєстровані? </h6>
-        <a class="toggle">Автроризуватися</a>
+        <a class="toggle">Авторизуватися</a>
       </div>
 
       <div class="actual-form">
@@ -103,12 +103,35 @@
           <div *ngIf="signUpForm.get('signUpPassword')?.errors?.['minlength'] && signUpForm.get('signUpPassword')?.touched" class="error-message">Пароль повинен містити принаймні 6 символів</div>
         </div>
 
+        <div class="input-warp">
+          <input
+            formControlName="signUpPasswordConfirm"
+            type="password"
+            placeholder=" "
+            class="input-field"
+            id="signUpPasswordConfirm"
+            [ngClass]="{'invalid': signUpForm.get('signUpPasswordConfirm')?.invalid && signUpForm.get('signUpPasswordConfirm')?.touched}"
+          />
+          <label>Підтвердіть пароль</label>
+          <div *ngIf="signUpForm.get('signUpPasswordConfirm')?.touched">
+            <div *ngIf="signUpForm.get('signUpPasswordConfirm')?.errors?.['required']" class="error-message">
+              Поле обов'язкове для заповнення
+            </div>
+            <div *ngIf="!signUpForm.get('signUpPasswordConfirm')?.errors?.['required'] && signUpForm.get('signUpPasswordConfirm')?.errors?.['minlength']" class="error-message">
+              Пароль повинен містити принаймні 6 символів
+            </div>
+            <div *ngIf="!signUpForm.get('signUpPasswordConfirm')?.errors?.['required'] && !signUpForm.get('signUpPasswordConfirm')?.errors?.['minlength'] && signUpForm.errors?.['passwordMismatch']" class="error-message">
+              Паролі мають збігатися
+            </div>
+          </div>
+        </div>
+
         <button type="submit" class="sign-btn" [disabled]="signUpForm.invalid || signUpForm.disabled">Зареєструватися</button>
 
         <asl-google-signin-button type='standard' text="signup_with" size='large' shape="rectangular" theme="filled_black" [width]="260"></asl-google-signin-button>
-
       </div>
     </form>
+
 
   </div>
 
