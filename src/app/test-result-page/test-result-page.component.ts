@@ -10,6 +10,7 @@ import {CommentsService} from "../shared/services/comments.service";
 import {AuthService} from "../shared/services/auth.service";
 import {ToastrService} from "ngx-toastr";
 import {TestsService} from "../shared/services/tests.service";
+import * as echarts from 'echarts';
 
 @Component({
   selector: 'app-test-result-page',
@@ -47,7 +48,6 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
     this.form = new FormGroup({
       text: new FormControl(null, [Validators.required])
     })
@@ -81,7 +81,7 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
     if (this.processingType === 'one') {
       const score = this.userTestResult.score
       if (score !== undefined) {
-         this.possibleResultsService.fetch(this.userTestResult.test).subscribe({
+        this.possibleResultsService.fetch(this.userTestResult.test).subscribe({
           next: (results) => {
             for (const result of results) {
               const minScore = result.minScore
@@ -108,7 +108,7 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
         })
       }
 
-    } else if (this.processingType == 'many') {
+    } else if (this.processingType === 'many') {
       const results = this.userTestResult.results
       if (results !== undefined) {
         results.forEach((possibleResult) => {
@@ -142,6 +142,39 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
         });
       }
 
+    } else if (this.processingType === 'category') {
+      const results = this.userTestResult.results
+      if (results !== undefined) {
+        results.forEach((possibleResult) => {
+          this.possibleResultsService.get(possibleResult._id).subscribe({
+            next: (result: PossibleResult) => {
+              const processedResult: ProcessedResult = {
+                name: result.name,
+                description: result.description,
+                imageSrc: result.imageSrc,
+                score: possibleResult.score,
+                minScore: result.minScore,
+                maxScore: result.maxScore
+              };
+              this.results.push(processedResult);
+            },
+            error: (err) => {
+              this.toastr.error(err)
+            },
+            complete: () => {
+              const processedResult: ProcessedResult = {
+                name: 'Дякуємо за проходження тесту!',
+                description: 'Результати тестування зображені нижче.',
+                imageSrc: '',
+                score: 100
+              };
+              this.bestResult = processedResult
+              this.initChart();
+              this.loading = false;
+            }
+          });
+        });
+      }
     } else if (this.processingType === 'self') {
       const processedResult: ProcessedResult = {
         name: 'Дякуємо за проходження тесту!',
@@ -152,8 +185,65 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
       this.bestResult = processedResult
       this.loading = false
     }
+  }
 
+  initChart() {
+    const chartElement = document.getElementById('chart') as HTMLDivElement;
+    const myChart = echarts.init(chartElement);
 
+    const categories = this.results.map(result => result.name);
+    const scores = this.results.map(result => result.score);
+    const minScores = this.results.map(result => result.minScore);
+    const maxScores = this.results.map(result => result.maxScore);
+
+    const option = {
+      legend: {
+        textStyle:{
+          color: 'grey',
+          fontSize: '0.85rem'
+        }
+      },
+      tooltip: {},
+      xAxis: {
+        type: 'category',
+        data: categories
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          name: 'Ваш результат',
+          type: 'bar',
+          data: scores,
+          itemStyle: {
+            opacity: 0.6
+          }
+        },
+        {
+          name: 'Мінімальне значення',
+          type: 'scatter',
+          data: minScores,
+          symbol: 'rect',
+          symbolSize: [100, 5],
+          itemStyle: {
+            color: 'blue'
+          }
+        },
+        {
+          name: 'Максимальне значення',
+          type: 'scatter',
+          data: maxScores,
+          symbol: 'rect',
+          symbolSize: [100, 5],
+          itemStyle: {
+            color: 'red'
+          }
+        }
+      ]
+    };
+
+    myChart.setOption(option);
   }
 
   loadComments(testId: string) {
@@ -239,7 +329,6 @@ export class TestResultPageComponent implements OnInit, AfterViewInit {
     this.commentsService.create(userComment).subscribe({
       next: comment => {
         this.toastr.success('Коментар додано')
-        //console.log(comment)
       },
       error: err => {
         this.toastr.error(err)

@@ -1,0 +1,110 @@
+<!--==================== HOME ====================-->
+<section class="home section" id="home">
+  <div class="home__container container grid">
+    <div class="home__images">
+
+      <div class="test-home__img">
+        <img
+          src="https://firebasestorage.googleapis.com/v0/b/diplomadatabase-84cd2.appspot.com/o/luscher.jpg?alt=media&token=17443f66-a727-4a8f-900c-465a137cb272">
+      </div>
+    </div>
+    <div class="home__data">
+      <h1 class="home__title">
+        Тест Люшера
+      </h1>
+      <p class="home__description">
+        Тест Люшера — це ефективний інструмент для швидкої оцінки психологічного стану людини. Його легкість у
+        використанні та глибина отриманих результатів роблять його цінним для психологів, коучів та HR-спеціалістів.
+        Попробуйте пройти тест Люшера зараз, щоб дізнатися більше про свій внутрішній світ!
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<!--==================== TEST  ====================-->
+<div class="luscher section">
+  <div class="container">
+    <div *ngIf="currentSelection === 0">
+      <h1>Інструкція до проходження тесту Люшера</h1>
+      <h2>Перед початком</h2>
+      <h4>
+        Тест Люшера допоможе вам дізнатися більше про ваш психоемоційний стан на основі кольорових переваг. Виконуйте
+        тест в спокійному місці, де вас не будуть відволікати.
+      </h4>
+
+      <h2>Як проходити тест</h2>
+      <h4>
+        Розслабтеся: Відкиньте всі думки і налаштуйтеся на спокійний стан.
+        Вибір кольорів: Перед вами з'являться кольорові картки або плитки.
+        Порядок вибору: Розташуйте кольори в порядку від найбільш до найменш привабливого для вас на даний момент.
+        Не обдумуйте занадто довго: Довіряйте своїй першій реакції та інтуїції.
+        Повтор: Цей процес може повторитися кілька разів з різними наборами кольорів.
+      </h4>
+      <h2>Важливо</h2>
+      <h4>
+        Немає правильних або неправильних відповідей. Обирайте кольори, виходячи з ваших поточних відчуттів.
+        Ваші відповіді залишаться конфіденційними.
+      </h4>
+      <h2>Почніть тест</h2>
+      <h4>Коли будете готові, натисніть кнопку "Почати тест", щоб розпочати свій шлях до самопізнання через
+        кольори!</h4>
+
+      <button class="button" (click)="nextSection()">Почати тест</button>
+    </div>
+
+    <div *ngIf="currentSelection === 1">
+      <h2>Выберите цвет (первый раунд)</h2>
+      <div>
+        <button *ngFor="let card of colorCards" [style.background-color]="card.color"
+                (click)="selectColor(card.id)"></button>
+      </div>
+    </div>
+
+    <div *ngIf="currentSelection === 2">
+      <h1>Другий етап</h1>
+      <h4>
+        Відпочиньте декілька хвилин і пройдить вибір кольорів ще раз.
+      </h4>
+      <button class="button" (click)="nextSection()">Почати тест</button>
+    </div>
+
+
+    <div *ngIf="currentSelection === 3">
+      <h2>Выберите цвет (второй раунд)</h2>
+      <div>
+        <button *ngFor="let card of colorCards" [style.background-color]="card.color"
+                (click)="selectColor(card.id)"></button>
+      </div>
+    </div>
+
+    <div *ngIf="currentSelection === 4">
+      <h1>Висновок Люшера</h1>
+      <h2>Бажані цілі та поведінка, продиктована цими цілями</h2>
+      <h3>Перша вибірка</h3>
+      <p>{{ userResult[0].firstSelection }}</p>
+      <h3>Друга вибірка</h3>
+      <p>{{ userResult[0].secondSelection }}</p>
+      <h2>Наявний стан речей і доречна при цьому поведінка</h2>
+      <h3>Перша вибірка</h3>
+      <p>{{userResult[1].firstSelection}}</p>
+      <h3>Друга вибірка</h3>
+      <p>{{userResult[1].secondSelection}}</p>
+      <h2>Стримувані властивості та недоречна при цьому поведінка</h2>
+      <h3>Перша вибірка</h3>
+      <p>{{userResult[2].firstSelection}}</p>
+      <h3>Друга вибірка</h3>
+      <p>{{userResult[2].secondSelection}}</p>
+      <h2>Заперечувані, пригнічувані або ж властивості, що несуть тривогу</h2>
+      <h3>Перша вибірка</h3>
+      <p>{{userResult[3].firstSelection}}</p>
+      <h3>Друга вибірка</h3>
+      <p>{{userResult[3].secondSelection}}</p>
+      <h2>Актуальна проблема або поведінка, спричинена стресом</h2>
+      <h3>Перша вибірка</h3>
+      <p>{{userResult[4].firstSelection}}</p>
+      <h3>Друга вибірка</h3>
+      <p>{{userResult[4].secondSelection}}</p>
+    </div>
+  </div>
+</div>

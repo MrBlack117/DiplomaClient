@@ -20,7 +20,7 @@
       Популярні тести<span>.</span>
     </h2>
 
-    <div class="popular__container">
+    <div class="popular__container" *ngIf="!loading; else loader">
       <article class="test__card" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
         <img [src]="test.imageSrc" alt="" class="popular__img">
         <div class="test__data">
@@ -43,7 +43,15 @@
         </div>
       </article>
     </div>
+
+    <ng-template #loader>
+      <div class="loader">
+        <i class='bx bx-loader-alt bx-spin'></i>
+      </div>
+    </ng-template>
   </div>
+
+
 </section>
 
 <!-- ==================== LATEST TESTS ==================== -->
@@ -53,7 +61,7 @@
       Нові тести<span>.</span>
     </h2>
 
-    <div class="latest__container">
+    <div class="latest__container" *ngIf="!loading; else loader">
       <article class="test__card" *ngFor="let test of latestTests" [routerLink]="['/test', test._id]">
         <img [src]="test.imageSrc" alt="" class="popular__img">
         <div class="test__data">
@@ -76,6 +84,12 @@
         </div>
       </article>
     </div>
+
+    <ng-template #loader>
+      <div class="loader">
+        <i class='bx bx-loader-alt bx-spin'></i>
+      </div>
+    </ng-template>
   </div>
 </section>
 
@@ -86,12 +100,15 @@
     <h2 class="section__title">
       Усі тести<span>.</span>
     </h2>
-    <div class="all__container">
-      <ul class="tests-list">
-        <li class="test-listing" *ngFor="let test of tests" [routerLink]="['/test', test._id]">
+    <ng-template #loader>
+      <div class="loader">
+        <i class='bx bx-loader-alt bx-spin'></i>
+      </div>
+    </ng-template>
+    <div class="all__container" *ngIf="!loading; else loader">
+      <div class="test-listing" *ngFor="let test of tests" [routerLink]="['/test', test._id]">
           {{test.name}}
-        </li>
-      </ul>
+        </div>
     </div>
   </div>
 </section>

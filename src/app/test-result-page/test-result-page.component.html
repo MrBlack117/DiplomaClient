@@ -14,7 +14,7 @@
     <div class="home__images">
 
       <div class="test-result__img">
-        <img [src]="bestResult.imageSrc" alt="">
+        <img [src]="bestResult.imageSrc">
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@
     <h2>Перегляньте свої результати</h2>
     <h3>Дізнайтесь детальні характеристики проходження</h3>
 
-    <div class="psychology__accordion " #accordionItems >
+    <div class="psychology__accordion " #accordionItems>
       <div class="psychology__accordion-item">
         <header class="psychology__accordion-header">
           <i class="bx bxs-check-shield psychology__accordion-icon"></i>
@@ -46,7 +46,7 @@
         <div class="psychology__accordion-content">
           <div class="possible-result" *ngFor="let possibleResult of results">
             <div class="psychology__accordion-image">
-              <img [src]="possibleResult.imageSrc" alt="">
+              <img [src]="possibleResult.imageSrc">
             </div>
 
             <div class="psychology__accordion-text">
@@ -54,7 +54,7 @@
                 {{ possibleResult.name }}
               </p>
               <p class="psychology__accordion-description">
-                {{ possibleResult.description }} Кількість очок: {{ possibleResult.score }}
+                {{ possibleResult.description }} Кількість балів: {{ possibleResult.score }}
               </p>
 
             </div>
@@ -65,6 +65,31 @@
       </div>
     </div>
   </div>
+</section>
+
+<section class="categories-section section" [ngClass]="{'hidden': processingType !== 'category'}">
+
+  <div class="container">
+    <div id="chart" class="chart" style="height: 500px;"></div>
+
+    <div class="possible-result" *ngFor="let possibleResult of results">
+      <div class="psychology__accordion-image">
+        <img [src]="possibleResult.imageSrc">
+      </div>
+
+      <div class="psychology__accordion-text">
+        <p class="psychology__accordion-name">
+          {{ possibleResult.name }}
+        </p>
+        <p class="psychology__accordion-description">
+          {{ possibleResult.description }} Кількість балів: {{ possibleResult.score }}
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+
 </section>
 
 <section [formGroup]="form" (ngSubmit)="onSubmit()" class="comments-section section">
@@ -79,11 +104,11 @@
         <button class="like-btn button" (click)="addReaction('like')" [ngClass]="{ 'like': userReaction === 'like' }">
           <i class='bx bx-like'></i>
         </button>
-        <button class="dislike-btn button" (click)="addReaction('dislike')" [ngClass]="{ 'dislike': userReaction === 'dislike' }">
+        <button class="dislike-btn button" (click)="addReaction('dislike')"
+                [ngClass]="{ 'dislike': userReaction === 'dislike' }">
           <i class='bx bx-dislike'></i>
         </button>
       </div>
-
 
 
       <form class="comment-form">

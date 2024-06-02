@@ -18,7 +18,9 @@
     </div>
   </div>
   <ng-template #loader>
-    <i class='bx bx-loader-alt bx-spin'></i>
+    <div class="loader">
+      <i class='bx bx-loader-alt bx-spin'></i>
+    </div>
   </ng-template>
 </section>
 
@@ -41,15 +43,23 @@
         </div>
 
         <h2 class="question__title">{{ question.text }}</h2>
-        <div class="question__options">
-          <div class="option" *ngFor="let option of question.answerOptionsObj">
-            <div class="option__image" *ngIf="option.imageSrc">
-              <img [src]="option.imageSrc">
-            </div>
-            <input type="radio" name="answer{{ i }}" [value]="option._id" (change)="onOptionSelect(option, i)">
-            {{ option.text }}
-          </div>
+
+        <div class="text-field" *ngIf="question.textAnswer; else answerOptions">
+          <input type="text" class="text-answer-input" (input)="onTextAnswerChange($event, question._id, i)">
         </div>
+
+        <ng-template #answerOptions>
+          <div class="question__options">
+            <div class="option" *ngFor="let option of question.answerOptionsObj">
+              <div class="option__image" *ngIf="option.imageSrc">
+                <img [src]="option.imageSrc">
+              </div>
+              <input type="radio" name="answer{{ i }}" [value]="option._id" (change)="onOptionSelect(option, i)">
+              {{ option.text }}
+            </div>
+          </div>
+        </ng-template>
+
       </div>
     </div>
 
@@ -59,5 +69,7 @@
 
 
 <ng-template #loader>
-  <i class='bx bx-loader-alt bx-spin'></i>
+  <div class="loader">
+    <i class='bx bx-loader-alt bx-spin'></i>
+  </div>
 </ng-template>

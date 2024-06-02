@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {TestsService} from "../shared/services/tests.service";
 import {UserTestResultService} from "../shared/services/user-test-result.service";
-import {Question, Test, TestStatistics, User, UserTestResult} from "../shared/interfaces";
+import {Question, Test, TestStatistics, TextResult, User, UserTestResult} from "../shared/interfaces";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {Router, RouterLink} from "@angular/router";
 import {QuestionsService} from "../shared/services/questions.service";
@@ -29,10 +29,17 @@ export class UserPageComponent implements OnInit {
 
   completedTestsData: { test: string, resultId: any, date: string }[] = []
   createdTestsData: { test: Test, results: UserTestResult[] }[] = []
-  resultsList: { name: string, email: string, date: string, answers: string[], testId: string }[] = []
+  resultsList: {
+    name: string,
+    email: string,
+    date: string,
+    answers: string[],
+    testId: string,
+    textAnswers?: TextResult[]
+  }[] = []
   testsStatistics: Map<string, TestStatistics> = new Map<string, TestStatistics>();
   isPsychologist: boolean = false
-  isAdmin:boolean = false
+  isAdmin: boolean = false
   showTestStatistics: boolean = false
   showResultsList: boolean = false
   selectedTestName: string
@@ -44,10 +51,9 @@ export class UserPageComponent implements OnInit {
     testName: string,
     user: { name: string, email: string },
     date: string,
-    processedQuestions: { text: string, answerOptions: { id: string, text: string }[] }[]
+    processedQuestions: { text: string, answerOptions: { id: string, text: string }[], textAnswer: string }[]
   }
   form: FormGroup;
-
 
 
   @ViewChild('userContent', {static: true}) userContentRef!: ElementRef;
@@ -82,9 +88,6 @@ export class UserPageComponent implements OnInit {
     }
 
 
-
-
-
     this.userTestResultService.getByUser().subscribe({
       next: userTestResults => {
         for (const userTestResult of userTestResults) {
@@ -99,7 +102,7 @@ export class UserPageComponent implements OnInit {
                   month: '2-digit',
                   day: '2-digit'
                 });
-                this.completedTestsData.unshift({
+                this.completedTestsData.push({
                   test: test.name,
                   resultId: userTestResult._id,
                   date: formattedDate
@@ -121,7 +124,7 @@ export class UserPageComponent implements OnInit {
         for (const test of tests) {
           this.userTestResultService.fetch(test._id).subscribe({
             next: (testResults: UserTestResult[]) => {
-              this.createdTestsData.unshift({
+              this.createdTestsData.push({
                 test: test,
                 results: testResults
               })
@@ -220,7 +223,11 @@ export class UserPageComponent implements OnInit {
     return possibleResults
   }
 
-  async calculatePossibleResultsStatsOne(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]): Promise<{ name: string, frequency: number, percent: number }[]> {
+  async calculatePossibleResultsStatsOne(testPossibleResults: string[] | undefined, usersResults: UserTestResult[]): Promise<{
+    name: string,
+    frequency: number,
+    percent: number
+  }[]> {
     const possibleResults: { name: string, frequency: number, percent: number }[] = [];
     const resultsFrequency = new Map<string, number>();
 
@@ -269,8 +276,8 @@ export class UserPageComponent implements OnInit {
     const resultsPromises = Array.from(resultsFrequency.entries()).map(async ([resultId, frequency]) => {
       const percent = (frequency / totalResults) * 100;
       const possibleResultObj = await fetchPossibleResult(resultId);
-      if(possibleResultObj !== undefined){
-        possibleResults.push({ name: possibleResultObj.name, frequency, percent });
+      if (possibleResultObj !== undefined) {
+        possibleResults.push({name: possibleResultObj.name, frequency, percent});
       }
 
     });
@@ -283,7 +290,7 @@ export class UserPageComponent implements OnInit {
   calculateQuestionsStats(testId: string, usersResults: UserTestResult[]) {
     const questionsStats: {
       name: string,
-      answerOptions: { name: string, frequency: number, percent: number }[]
+      answerOptions: { name: string, frequency?: number, percent: number }[]
     }[] = [];
 
     // Расчет частоты выбора вариантов ответов на вопросы и их процентов
@@ -297,9 +304,11 @@ export class UserPageComponent implements OnInit {
       },
       complete: () => {
         for (const question of testQuestions) {
+          let totalPercent = 0
+
           const questionStatistics = {
             name: question.text,
-            answerOptions: [] as { name: string, frequency: number, percent: number }[]
+            answerOptions: [] as { name: string, frequency?: number, percent: number }[]
           };
 
           const answerOptionsFrequency = new Map<string, number>();
@@ -322,10 +331,10 @@ export class UserPageComponent implements OnInit {
             }
           }
 
-          // Расчет процентов выбора вариантов ответов относительно всех вариантов ответа на вопрос
           const totalAnswers = usersResults.length;
           for (const frequency of answerOptionsFrequency.values()) {
             const percent = ((frequency / totalAnswers) * 100);
+            totalPercent += percent
             answerOptionsPercent.set(frequency.toString(), percent);
           }
 
@@ -337,6 +346,10 @@ export class UserPageComponent implements OnInit {
               }
             })
 
+          }
+          if (totalPercent < 99) {
+            const p = 100 - totalPercent
+            questionStatistics.answerOptions.push({name: 'Інші відповіді', percent: p});
           }
 
           questionsStats.push(questionStatistics);
@@ -382,7 +395,14 @@ export class UserPageComponent implements OnInit {
   }
 
   getUsersTestResultsList(testId: string) {
-    const userTestResultsList: { name: string, email: string, date: string, answers: string[], testId: string }[] = []
+    const userTestResultsList: {
+      name: string,
+      email: string,
+      date: string,
+      answers: string[],
+      testId: string,
+      textAnswers?: TextResult[]
+    }[] = []
     this.userTestResultService.fetch(testId).subscribe({
       next: (results: UserTestResult[]) => {
         for (const result of results) {
@@ -398,12 +418,13 @@ export class UserPageComponent implements OnInit {
                     month: '2-digit',
                     day: '2-digit'
                   });
-                  userTestResultsList.unshift({
+                  userTestResultsList.push({
                     name: user.name,
                     email: user.email,
                     date: formattedDate,
                     answers: result.answers,
-                    testId: testId
+                    testId: testId,
+                    textAnswers: result.textAnswers,
                   })
                 }
               }
@@ -418,16 +439,29 @@ export class UserPageComponent implements OnInit {
   showUserAnswers(testId: string, answers: string[], testName: string, user: {
     name: string,
     email: string
-  }, date: string) {
+  }, date: string, textAnswers?: TextResult[]) {
     this.userContentRef.nativeElement.classList.add('users-answers-mode')
     this.resultAnswers = answers
 
-    const processedQuestions: { text: string, answerOptions: { id: string, text: string }[] }[] = []
+    const processedQuestions: { text: string, answerOptions: { id: string, text: string }[], textAnswer: string }[] = []
 
     this.questionService.fetch(testId).subscribe({
       next: (questions) => {
         for (const question of questions) {
           const questionText = question.text
+          let textAnswer: string = ''
+
+
+          if (textAnswers != undefined) {
+            for (const answer of textAnswers) {
+              if (answer != undefined) {
+                if (answer.questionId == question._id) {
+                  textAnswer = answer.text;
+                }
+              }
+            }
+          }
+
           const answers: { id: string, text: string }[] = []
           if (question._id !== undefined) {
             this.answerOptionService.fetch(question._id).subscribe({
@@ -442,7 +476,9 @@ export class UserPageComponent implements OnInit {
               }
             })
           }
-          processedQuestions.push({text: questionText, answerOptions: answers})
+
+
+          processedQuestions.push({text: questionText, answerOptions: answers, textAnswer: textAnswer})
 
         }
       },
@@ -472,7 +508,6 @@ export class UserPageComponent implements OnInit {
     this.userContentRef.nativeElement.classList.remove('users-answers-mode')
     this.userContentRef.nativeElement.classList.add('users-results-mode')
   }
-
 
 
   logOut() {

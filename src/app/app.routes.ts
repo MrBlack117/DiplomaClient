@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 import {BigLayoutComponent} from "./shared/layouts/big-layout/big-layout.component";
 import {SmallLayoutComponent} from "./shared/layouts/small-layout/small-layout.component";
 import {MainPageComponent} from "./main-page/main-page.component";
@@ -10,6 +10,8 @@ import {TestFormPageComponent} from "./test-form-page/test-form-page.component";
 import {TestResultPageComponent} from "./test-result-page/test-result-page.component";
 import {UserPageComponent} from "./user-page/user-page.component";
 import {AdminPageComponent} from "./admin-page/admin-page.component";
+import {LuscherPageComponent} from "./luscher-page/luscher-page.component";
+import {NotFoundPageComponent} from "./not-found-page/not-found-page.component";
 
 export const routes: Routes = [
   {
@@ -17,6 +19,7 @@ export const routes: Routes = [
       {path: '', redirectTo: '/main', pathMatch: 'full'},
       {path: 'main', component: MainPageComponent},
       {path: 'tests', component: TestsPageComponent},
+      {path: 'test/luscher', component: LuscherPageComponent},
       {path: 'test/new', component: TestFormPageComponent},
       {path: 'test/:id', component: TestPageComponent}, // {path: 'test/:id', component: TestPageComponent, canActivate: [AuthGuard]},
       {path: 'test/edit/:id', component: TestFormPageComponent},
@@ -29,6 +32,8 @@ export const routes: Routes = [
       {path: 'user', component: UserPageComponent},
       {path: 'admin', component: AdminPageComponent},
     ]
-  }
+  },
+  {path: '**', component: NotFoundPageComponent}
+
 ];
 

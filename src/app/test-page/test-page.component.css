@@ -27,3 +27,38 @@
   height: 190px;
   border-radius: 24px;
 }
+
+.text-field{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-answer-input{
+  width: 80%;
+  height: 5vh;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 0.2rem;
+  border: var(--first-color) 1px solid;
+
+}
+
+.loader {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader i {
+  zoom: 3
+}
+
+@media screen and (min-width: 767px) {
+  .home__container {
+    grid-template-columns: repeat(2, 1fr);
+    padding-top: 2rem;
+    column-gap: 2rem;
+  }
+}

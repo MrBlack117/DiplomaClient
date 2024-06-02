@@ -19,28 +19,30 @@ export class QuestionsService {
     return this.http.get<Question[]>(`${this.apiUrl}/api/question/${testId}`)
   }
 
-  create(text: string, testId: string, image?: File): Observable<Question> {
+  create(text: string, testId: string, textAnswer: string, image?: File): Observable<Question> {
     const fd = new FormData();
 
-    if (image){
+    if (image) {
       fd.append('image', image, image.name)
     }
 
     fd.append('text', text);
     fd.append('testId', testId);
+    fd.append('textAnswer', textAnswer)
 
     return this.http.post<Question>(`${this.apiUrl}/api/question`, fd)
   }
 
-  update(id: string, text: string, testId: string, image?: File): Observable<Question> {
+  update(id: string, text: string, testId: string, textAnswer: string, image?: File): Observable<Question> {
     const fd = new FormData();
 
-    if (image){
+    if (image) {
       fd.append('image', image, image.name)
     }
 
     fd.append('text', text);
     fd.append('testId', testId);
+    fd.append('textAnswer', textAnswer)
 
     return this.http.patch<Question>(`${this.apiUrl}/api/question/${id}`, fd)
   }

@@ -1,6 +1,6 @@
 import Swiper from "swiper";
 import ScrollReveal from 'scrollreveal';
-import {Renderer2, ElementRef, HostListener} from '@angular/core';
+import {ElementRef} from '@angular/core';
 
 
 export class DesignService {
@@ -29,7 +29,7 @@ export class DesignService {
     })
 
     sr.reveal('.home__title, .popular__container, .subscribe__container, .footer__container')
-    sr.reveal('.home__description, .footer__info', {delay: 500})
+    sr.reveal('.home__description, .footer__info', {delay: 300})
     sr.reveal('.home__button', {delay: 600})
     sr.reveal('.home__psychology', {delay: 700})
     sr.reveal('.home__images', {delay: 800, origin: 'bottom'})
@@ -80,6 +80,14 @@ export class DesignService {
     }
   }
 
+  static themeViewer(body: HTMLElement) {
+    const selectedTheme = localStorage.getItem('selected-theme')
+    const darkTheme = 'dark-theme'
+    if (selectedTheme) {
+      // If the validation is fulfilled, we ask what the issue was to know if we activated or deactivated the dark
+      body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
+    }
+  }
 
   static themeChanger(buttonRef: ElementRef, body: HTMLElement) {
 
@@ -124,23 +132,25 @@ export class DesignService {
     })
   }
 
-  static modalInit(popupRef: ElementRef, overlayRef: ElementRef) {
+  static modalInit(popupRef: ElementRef, overlayRef: ElementRef, closeRef: ElementRef) {
     const section = popupRef.nativeElement,
-      overlay = overlayRef.nativeElement
+      overlay = overlayRef.nativeElement,
+      closeBtn = closeRef.nativeElement
 
 
     overlay.addEventListener("click", () =>
       section.classList.remove("active")
     );
 
+    closeBtn.addEventListener("click", () =>
+      section.classList.remove("active")
+    );
 
     /*
 
     showBtn.addEventListener("click", () => section.classList.add("active"));
 
-    closeBtn.addEventListener("click", () =>
-      section.classList.remove("active")
-    );
+
 
     */
   }

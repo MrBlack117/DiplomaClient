@@ -67,10 +67,10 @@ form {
 
 .description,
 .description textarea {
-  height: 15rem;
+  height: 5rem;
   background: var(--container-color);
   resize: none;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-family: 'Fira Sans Condensed', sans-serif;
 
   font-size: 1rem;
@@ -129,7 +129,15 @@ label {
 }
 
 .image-preview {
-  max-width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.image-preview img{
+  max-width: 20vh;
+  max-height: 20vh;
 }
 
 .modal-box button.delete-btn:hover {
@@ -143,6 +151,8 @@ label {
   transform: translate(-50%, -50%);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  max-height: 90vh;
+  overflow: auto;
 }
 
 .overlay {
@@ -198,6 +208,7 @@ section.active .overlay {
 }
 
 .modal-box .buttons {
+  margin-top: 1rem;
   display: flex;
   justify-content: space-evenly;
 }
@@ -223,3 +234,5 @@ section.active .overlay {
   margin-top: 1rem;
   margin-left: .5rem;
 }
+
+

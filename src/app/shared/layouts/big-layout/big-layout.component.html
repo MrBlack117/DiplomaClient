@@ -20,16 +20,17 @@
             </a>
           </li>
           <li class="nav__item">
-            <a routerLink="/a" routerLinkActive="active-link" class="nav__link">
-              <i class="bx bx-award"></i>
-              <span>Психологи</span>
+            <a routerLink="/auth" routerLinkActive="active-link" class="nav__link" *ngIf="!user; else profileLinkNav">
+              <i class='bx bxs-user-circle'></i>
+              <span>Кабінет</span>
             </a>
-          </li>
-          <li class="nav__item">
-            <a routerLink="/b" routerLinkActive="active-link" class="nav__link">
-              <i class="bx bx-phone"></i>
-              <span>Про нас</span>
-            </a>
+
+            <ng-template #profileLinkNav>
+              <a routerLink="/user" routerLinkActive="active-link" class="nav__link">
+                <i class='bx bxs-user-circle'></i>
+                <span>Кабінет</span>
+              </a>
+            </ng-template>
           </li>
         </ul>
       </div>

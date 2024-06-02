@@ -36,15 +36,16 @@
 
       <div class="popular__container swiper">
         <div class="swiper-wrapper">
-          <article class="popular__card swiper-slide" *ngFor="let test of popularTests" [routerLink]="['/test', test._id]">
-            <img [src]="test.imageSrc" class="popular__img" alt="">
+          <article class="popular__card swiper-slide" *ngFor="let test of popularTests"
+                   [routerLink]="['/test', test._id]">
+            <img [src]="test.imageSrc" class="popular__img">
 
             <div class="popular__data">
               <h2 class="popular__title">
-                {{test.name}}
+                {{ test.name }}
               </h2>
               <p class="popular__description">
-                {{test.brief}}
+                {{ test.brief }}
               </p>
               <div class="popular__info">
                 <div class="test__passes">
@@ -74,6 +75,12 @@
           <i class="bx bx-chevron-left"></i>
         </div>
       </div>
+
+
+      <div class="loader" *ngIf="loading">
+        <i class='bx bx-loader-alt bx-spin'></i>
+      </div>
+
     </div>
   </section>
 

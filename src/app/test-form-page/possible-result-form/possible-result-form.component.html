@@ -3,9 +3,15 @@
   <span class="overlay" #overlay></span>
   <div class="container">
 
-    <div class="heading">
+    <div class="heading" *ngIf="processingType !== 'category'; else categoryHeader">
       <h2>Можливі результати:</h2>
     </div>
+
+    <ng-template #categoryHeader>
+      <div class="heading">
+        <h2>Категоії:</h2>
+      </div>
+    </ng-template>
 
     <div class="scoresCorrectnessMessage" *ngIf="scoreErrors && processingType == 'one'">
       <div class="error-correctness" *ngFor="let error of scoreErrors">
@@ -35,7 +41,7 @@
 
         <ng-template #empty>
           <div>
-            Немає можливих результатів
+            Немає доданих
           </div>
         </ng-template>
 
@@ -82,8 +88,8 @@
         </div>
       </div>
 
-      <div class="mіnScore" *ngIf="this.processingType == 'one'">
-        <div class="mіnScore input-warp" >
+      <div class="mіnScore" *ngIf="this.processingType == 'one' || this.processingType == 'category'">
+        <div class="mіnScore input-warp">
           <input
             formControlName="minScore"
             type="number"
@@ -92,13 +98,13 @@
           />
           <label>Нижня межа балів</label>
         </div>
-        <div class="check">
+        <div class="check" *ngIf="this.processingType == 'one'">
           <input type="checkbox" formControlName="isLowest" (change)="onCheckBoxChange($event, 'minScore')">
           <i class='bx bx-minus'></i><i class='bx bx-infinite'></i>
         </div>
       </div>
 
-      <div class="maxScore" *ngIf="processingType == 'one'">
+      <div class="maxScore" *ngIf="processingType == 'one'|| this.processingType == 'category'">
         <div class="maxScore input-warp">
           <input
             formControlName="maxScore"
@@ -108,7 +114,7 @@
           />
           <label>Верхня межа балів</label>
         </div>
-        <div class="check">
+        <div class="check" *ngIf="this.processingType == 'one'">
           <input type="checkbox" formControlName="isHighest" (change)="onCheckBoxChange($event, 'maxScore')">
           <i class='bx bx-plus'></i><i class='bx bx-infinite'></i>
         </div>
@@ -116,10 +122,10 @@
 
 
       <div class="image-preview">
-        <img [src]="imagePreview" *ngIf="imagePreview" alt="">
+        <img [src]="imagePreview" *ngIf="imagePreview">
       </div>
 
-      <div class="image input-warp">
+      <div class="image">
         <input type="file" accept="image/*" class="image-input" (change)="onFileUpload($event)" #imageInput>
         <button type="button" (click)="triggerClick()" class="imageBtn" [disabled]="form.disabled">Додати
           картинку
@@ -127,7 +133,11 @@
       </div>
 
       <div class="buttons">
-        <button type="submit" class="close-btn" [disabled]="form.invalid || form.disabled">Зберегти можливий результат</button>
+        <button type="submit" class="close-btn" [disabled]="form.invalid || form.disabled">Зберегти
+        </button>
+        <button type="button" class="close-btn" #closeBtn> Закрити
+        </button>
+
       </div>
     </form>
 

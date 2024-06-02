@@ -50,6 +50,7 @@ export interface Question {
   _id?: string
   text: string
   testId: string
+  textAnswer: boolean
   imageSrc?: string
   answerOptionIds?: string[]
   answerOptions?:  string[]
@@ -73,6 +74,7 @@ export interface UserTestResult {
   score?: number
   results?: Result[]
   answers: string[]
+  textAnswers?: TextResult[]
 }
 
 export interface Result {
@@ -80,15 +82,27 @@ export interface Result {
   score: number
 }
 
+export interface TextResult{
+  questionId: string,
+  text: string
+}
+
 export interface ProcessedResult {
   name: string,
   description: string
   imageSrc?: string
   score: number
+  minScore?: number,
+  maxScore?: number
 }
 
 export interface TestStatistics {
   testName: string;
   possibleResults: { name: string, frequency: number, percent: number }[];
-  questions: { name: string, answerOptions: { name: string, frequency: number, percent: number }[] }[];
+  questions: { name: string, answerOptions: { name: string, frequency?: number, percent: number }[] }[];
+}
+
+export interface LuscherResult{
+  firstSelection: string;
+  secondSelection: string;
 }

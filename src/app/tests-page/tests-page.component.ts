@@ -1,21 +1,24 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {TestsService} from "../shared/services/tests.service";
 import {Router, RouterLink} from "@angular/router";
 import {Test} from "../shared/interfaces";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
+import {DesignService} from "../shared/classes/design";
 
 @Component({
   selector: 'app-tests-page',
   standalone: true,
   imports: [
     NgForOf,
-    RouterLink
+    RouterLink,
+    NgIf
   ],
   templateUrl: './tests-page.component.html',
   styleUrl: './tests-page.component.css'
 })
-export class TestsPageComponent implements OnInit{
+export class TestsPageComponent implements OnInit, AfterViewInit{
 
+  loading = true
   popularTests: Test[] = [];
   latestTests: Test[] = [];
   tests: Test[]
@@ -48,12 +51,13 @@ export class TestsPageComponent implements OnInit{
         console.log(error);
       },
       complete: () => {
-        console.log(this.latestTests);
-        console.log(this.popularTests);
-        console.log(this.tests);
+        this.loading = false
 
       }
     });
   }
 
+  ngAfterViewInit() {
+    DesignService.scrollReveal()
+  }
 }

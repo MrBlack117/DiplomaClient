@@ -1,3 +1,50 @@
-.test__card{
+.test__card {
   cursor: pointer;
+}
+
+.all__container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  row-gap: 1rem;
+}
+
+@media (max-width: 1050px) {
+
+}
+
+
+@media (max-width: 990px) {
+  .popular__container, .latest__container {
+    grid-template-columns: repeat(3, auto);
+  }
+}
+
+@media (max-width: 767px) {
+  .popular__container, .latest__container {
+    grid-template-columns: repeat(2, auto);
+  }
+
+  .home__data {
+    padding-bottom: 2rem;
+  }
+
+  .test__card {
+    width: 90%;
+  }
+}
+
+
+@media (max-width: 500px) {
+  .popular__container, .latest__container {
+    grid-template-columns: repeat(1, auto);
+  }
+
+  .home__data {
+    padding-bottom: 2rem;
+  }
+
+  .all__container {
+    grid-template-columns: auto ;
+    padding: .5rem 3rem 3rem;
+  }
 }

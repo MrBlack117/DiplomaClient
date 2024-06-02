@@ -23,8 +23,12 @@
             [ngClass]="{'invalid': signInForm.get('signInEmail')?.invalid && signInForm.get('signInEmail')?.touched}"
           />
           <label>Пошта</label>
-          <div *ngIf="signInForm.get('signInEmail')?.errors?.['required'] && signInForm.get('signInEmail')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
-          <div *ngIf="signInForm.get('signInEmail')?.errors?.['email'] && signInForm.get('signInEmail')?.touched" class="error-message">Будь ласка, введіть дійсну електронну адресу</div>
+          <div *ngIf="signInForm.get('signInEmail')?.errors?.['required'] && signInForm.get('signInEmail')?.touched"
+               class="error-message">Поле обов'язкове для заповнення
+          </div>
+          <div *ngIf="signInForm.get('signInEmail')?.errors?.['email'] && signInForm.get('signInEmail')?.touched"
+               class="error-message">Будь ласка, введіть дійсну електронну адресу
+          </div>
         </div>
 
         <div class="input-warp">
@@ -37,14 +41,22 @@
             [ngClass]="{'invalid': signInForm.get('signInPassword')?.invalid && signInForm.get('signInPassword')?.touched}"
           />
           <label>Пароль</label>
-          <div *ngIf="signInForm.get('signInPassword')?.errors?.['required'] && signInForm.get('signInPassword')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
-          <div *ngIf="signInForm.get('signInPassword')?.errors?.['minlength'] && signInForm.get('signInPassword')?.touched" class="error-message">Пароль повинен містити принаймні 6 символів</div>
+          <div
+            *ngIf="signInForm.get('signInPassword')?.errors?.['required'] && signInForm.get('signInPassword')?.touched"
+            class="error-message">Поле обов'язкове для заповнення
+          </div>
+          <div
+            *ngIf="signInForm.get('signInPassword')?.errors?.['minlength'] && signInForm.get('signInPassword')?.touched"
+            class="error-message">Пароль повинен містити принаймні 6 символів
+          </div>
         </div>
 
         <button type="submit" class="sign-btn" [disabled]="signInForm.invalid || signInForm.disabled">Увійти</button>
 
-        <asl-google-signin-button type='standard' text="continue_with" size='large' shape="rectangular" theme="filled_black" [width]="260"></asl-google-signin-button>
-
+        <div class="google-button">
+          <asl-google-signin-button type='standard' text="continue_with" size='large' shape="rectangular"
+                                    theme="filled_black" [width]="220"></asl-google-signin-button>
+        </div>
       </div>
     </form>
 
@@ -72,7 +84,9 @@
             [ngClass]="{'invalid': signUpForm.get('signUpName')?.invalid && signUpForm.get('signUpName')?.touched}"
           />
           <label>Ім'я</label>
-          <div *ngIf="signUpForm.get('signUpName')?.errors?.['required'] && signUpForm.get('signUpName')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
+          <div *ngIf="signUpForm.get('signUpName')?.errors?.['required'] && signUpForm.get('signUpName')?.touched"
+               class="error-message">Поле обов'язкове для заповнення
+          </div>
         </div>
 
         <div class="input-warp">
@@ -85,8 +99,12 @@
             [ngClass]="{'invalid': signUpForm.get('signUpEmail')?.invalid && signUpForm.get('signUpEmail')?.touched}"
           />
           <label>Пошта</label>
-          <div *ngIf="signUpForm.get('signUpEmail')?.errors?.['required'] && signUpForm.get('signUpEmail')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
-          <div *ngIf="signUpForm.get('signUpEmail')?.errors?.['email'] && signUpForm.get('signUpEmail')?.touched" class="error-message">Будь ласка, введіть дійсну електронну адресу</div>
+          <div *ngIf="signUpForm.get('signUpEmail')?.errors?.['required'] && signUpForm.get('signUpEmail')?.touched"
+               class="error-message">Поле обов'язкове для заповнення
+          </div>
+          <div *ngIf="signUpForm.get('signUpEmail')?.errors?.['email'] && signUpForm.get('signUpEmail')?.touched"
+               class="error-message">Будь ласка, введіть дійсну електронну адресу
+          </div>
         </div>
 
         <div class="input-warp">
@@ -99,8 +117,14 @@
             [ngClass]="{'invalid': signUpForm.get('signUpPassword')?.invalid && signUpForm.get('signUpPassword')?.touched}"
           />
           <label>Пароль</label>
-          <div *ngIf="signUpForm.get('signUpPassword')?.errors?.['required'] && signUpForm.get('signUpPassword')?.touched" class="error-message">Поле обов'язкове для заповнення</div>
-          <div *ngIf="signUpForm.get('signUpPassword')?.errors?.['minlength'] && signUpForm.get('signUpPassword')?.touched" class="error-message">Пароль повинен містити принаймні 6 символів</div>
+          <div
+            *ngIf="signUpForm.get('signUpPassword')?.errors?.['required'] && signUpForm.get('signUpPassword')?.touched"
+            class="error-message">Поле обов'язкове для заповнення
+          </div>
+          <div
+            *ngIf="signUpForm.get('signUpPassword')?.errors?.['minlength'] && signUpForm.get('signUpPassword')?.touched"
+            class="error-message">Пароль повинен містити принаймні 6 символів
+          </div>
         </div>
 
         <div class="input-warp">
@@ -117,18 +141,25 @@
             <div *ngIf="signUpForm.get('signUpPasswordConfirm')?.errors?.['required']" class="error-message">
               Поле обов'язкове для заповнення
             </div>
-            <div *ngIf="!signUpForm.get('signUpPasswordConfirm')?.errors?.['required'] && signUpForm.get('signUpPasswordConfirm')?.errors?.['minlength']" class="error-message">
+            <div
+              *ngIf="!signUpForm.get('signUpPasswordConfirm')?.errors?.['required'] && signUpForm.get('signUpPasswordConfirm')?.errors?.['minlength']"
+              class="error-message">
               Пароль повинен містити принаймні 6 символів
             </div>
-            <div *ngIf="!signUpForm.get('signUpPasswordConfirm')?.errors?.['required'] && !signUpForm.get('signUpPasswordConfirm')?.errors?.['minlength'] && signUpForm.errors?.['passwordMismatch']" class="error-message">
+            <div
+              *ngIf="!signUpForm.get('signUpPasswordConfirm')?.errors?.['required'] && !signUpForm.get('signUpPasswordConfirm')?.errors?.['minlength'] && signUpForm.errors?.['passwordMismatch']"
+              class="error-message">
               Паролі мають збігатися
             </div>
           </div>
         </div>
 
-        <button type="submit" class="sign-btn" [disabled]="signUpForm.invalid || signUpForm.disabled">Зареєструватися</button>
-
-        <asl-google-signin-button type='standard' text="signup_with" size='large' shape="rectangular" theme="filled_black" [width]="260"></asl-google-signin-button>
+        <button type="submit" class="sign-btn" [disabled]="signUpForm.invalid || signUpForm.disabled">Зареєструватися
+        </button>
+        <div class="google-button">
+          <asl-google-signin-button type='standard' text="signup_with" size='large' shape="rectangular"
+                                    theme="filled_black" [width]="220"></asl-google-signin-button>
+        </div>
       </div>
     </form>
 

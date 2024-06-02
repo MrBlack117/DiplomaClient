@@ -84,15 +84,15 @@ export class AuthPageComponent implements AfterViewInit, OnInit, OnDestroy {
   signInSubmit() {
     this.signInForm.disable()
     this.subDef = this.auth.login(this.signInForm.value).subscribe({
-      next: () => {
-        this.toastr.success('Авторизація успішна!')
-        this.router.navigate(['/main'])
-      },
-      error: (errorResponse: any) => {
-        this.toastr.error(errorResponse.error.message, 'Помилка')
-        this.signInForm.enable()
-      }
-    })
+        next: () => {
+          this.toastr.success('Авторизація успішна!')
+          this.router.navigate(['/main'])
+        },
+        error: (errorResponse: any) => {
+          this.toastr.error(errorResponse.error.message, 'Помилка')
+          this.signInForm.enable()
+        }
+      })
   }
 
   signUpSubmit() {

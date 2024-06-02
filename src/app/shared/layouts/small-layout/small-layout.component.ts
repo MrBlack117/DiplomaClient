@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {RouterModule} from "@angular/router";
+import {DesignService} from "../../classes/design";
 
 @Component({
   selector: 'app-small-layout',
@@ -8,6 +9,9 @@ import {RouterModule} from "@angular/router";
   templateUrl: './small-layout.component.html',
   styleUrl: './small-layout.component.css'
 })
-export class SmallLayoutComponent {
+export class SmallLayoutComponent implements AfterViewInit {
 
+  ngAfterViewInit() {
+    DesignService.themeViewer(document.body);
+  }
 }

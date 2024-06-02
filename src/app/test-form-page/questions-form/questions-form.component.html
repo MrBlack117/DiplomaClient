@@ -19,7 +19,6 @@
             </p>
 
 
-
             <button type="button" class="close-btn"
                     (click)="onDeleteQuestion($event, question)"><i class='bx bx-trash'></i>
             </button>
@@ -29,17 +28,17 @@
 
         <ng-template #empty>
           <div>
-            Немає можливих результатів
+            Немає доданих
           </div>
         </ng-template>
 
       </div>
       <ng-template #loader>
-        <i class='bx bx-loader-alt bx-spin' ></i>
+        <i class='bx bx-loader-alt bx-spin'></i>
       </ng-template>
 
       <div class="question-component-add show-modal" (click)="onAddPosition()">
-        <i class='bx bx-list-plus' ></i>
+        <i class='bx bx-list-plus'></i>
       </div>
     </div>
 
@@ -53,21 +52,29 @@
           </div>
         </div>
 
+        <div class="checkbox">
+          <input type="checkbox" formControlName="textAnswer" id="textAnswer"> Власна відповідь
+        </div>
+
         <div class="image-preview">
           <img [src]="questionImagePreview" *ngIf="questionImagePreview">
         </div>
 
         <div class="image input-warp">
           <input type="file" accept="image/*" class="image-input" (change)="onFileUpload($event)" #questionImageInput>
-          <button type="button" (click)="triggerClick()" class="imageBtn" [disabled]="form.disabled"><i class='bx bxs-image-add'></i>
+          <button type="button" (click)="triggerClick()" class="imageBtn" [disabled]="form.disabled">Додати картинку
           </button>
         </div>
 
         <div class="answer-options-container">
           <div formArrayName="answerOptions">
             <div class="answer-option-warp" *ngFor="let answerOption of answerOptions.controls; let i = index">
+
+              <div class="image-preview" *ngIf="answerOptionPreviews[i]">
+                <img [src]="answerOptionPreviews[i]" alt="Image Preview">
+              </div>
+
               <div class="answer-option" [formGroupName]="i">
-                {{ i + 1 }}.
                 <div class="answer-text input-warp">
                   <input type="text" class="input-field" placeholder=" " formControlName="text" required>
                   <label class="input-label">Варіант відповіді</label>
@@ -76,12 +83,17 @@
                   </div>
                 </div>
 
-                <div class="possible-result input-warp" *ngIf="processingType == 'many'">
+                <div class="possible-result input-warp"
+                     *ngIf="processingType == 'many' || processingType == 'category'">
                   <select class="select-field" formControlName="possibleResult" required>
-                    <option *ngFor="let possibleResult of possibleResults" [ngValue]="possibleResult._id">{{ possibleResult.name }}</option>
+                    <option *ngFor="let possibleResult of possibleResults"
+                            [ngValue]="possibleResult._id">{{ possibleResult.name }}
+                    </option>
                   </select>
 
-                  <label class="input-label" id="select-label">Потенційний результат</label>
+                  <label class="input-label" id="select-label" *ngIf="processingType == 'many'">Потенційний
+                    результат</label>
+                  <label class="input-label" *ngIf="processingType == 'category'">Категорія</label>
                   <div
                     *ngIf="answerOption.get('possibleResult')?.errors?.['required'] && answerOption.get('possibleResult')?.touched"
                     class="error-message">Поле обов'язкове для заповнення
@@ -96,14 +108,13 @@
                   </div>
                 </div>
 
-                <input type="file" (change)="onImageSelected($event, i)" accept="image/*" class="image-input" #imageInput>
+                <input type="file" (change)="onImageSelected($event, i)" accept="image/*" class="image-input"
+                       #imageInput>
 
 
-                <button type="button" class="button" (click)="triggerClickAO($event, i)"><i class='bx bxs-image-add'></i></button>
+                <button type="button" class="button" (click)="triggerClickAO($event, i)"><i
+                  class='bx bxs-image-add'></i></button>
                 <button type="button" class="delete-answer-btn" (click)="removeAnswerOption(i)">Видалити</button>
-              </div>
-              <div class="image-preview" *ngIf="answerOptionPreviews[i]">
-                <img [src]="answerOptionPreviews[i]" alt="Image Preview">
               </div>
             </div>
           </div>
@@ -111,6 +122,7 @@
 
         <button type="button" class="add-answer-btn" (click)="addAnswerOption()">Додати варіант відповіді</button>
         <button type="submit" class="add-question-block-btn">Зберегти питання</button>
+        <button type="button" class="add-question-block-btn" #closeBtn>Закрити</button>
       </form>
     </div>
   </div>

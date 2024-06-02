@@ -33,6 +33,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
   @Input('processingType') processingType: string;
   @ViewChild('popup', {static: true}) popupRef!: ElementRef;
   @ViewChild('overlay', {static: true}) overlayRef!: ElementRef;
+  @ViewChild('closeBtn', {static: true}) closeRef!: ElementRef;
   @ViewChild('questionImageInput') questionImageInputRef: ElementRef;
   @ViewChildren('imageInput') imageInputs: QueryList<ElementRef>;
 
@@ -57,6 +58,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
     this.form = this.fb.group({
       question: ['', Validators.required],
       answerOptions: this.fb.array([]),
+      textAnswer: [false]
     });
 
   }
@@ -74,9 +76,11 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
   openModal(question: Question) {
     this.questionId = question._id;
     this.actualizePossibleResults()
+    this.answerOptionPreviews = []
     this.form.patchValue({
       question: question.text,
-      image: question.imageSrc
+      image: question.imageSrc,
+      textAnswer: question.textAnswer
     });
     this.questionImagePreview = question.imageSrc
 
@@ -98,13 +102,11 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
             this.answerOptionPreviews.push(answerOption.imageSrc)
             answerOptionsFormArray.push(answerOptionGroup);
           }
-          console.log('load complete')
         },
         error: err => {
           this.toastr.error(err)
         },
         complete: () => {
-          console.log('window open')
           this.popupRef.nativeElement.classList.add("active")
         }
       });
@@ -123,6 +125,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
       name: null,
       description: null,
       possibleResult: null,
+      textAnswer: false
     })
     this.popupRef.nativeElement.classList.add("active")
 
@@ -220,7 +223,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
     this.form.disable()
 
     const answerOptionsFormArray = this.form.get('answerOptions') as FormArray;
-    if (answerOptionsFormArray.length < 2) {
+    if (answerOptionsFormArray.length < 2 && !this.form.value.textAnswer) {
       this.toastr.error("Додайте принаймні 2 варіанти відповіді")
       this.form.enable()
       return
@@ -261,6 +264,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
         this.questionId,
         this.form.value.question,
         this.testId,
+        this.form.value.textAnswer.toString(),
         this.questionImage
       ).subscribe({
         next: question => {
@@ -275,7 +279,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
         complete: () => completed()
       })
     } else {
-      this.questionService.create(this.form.value.question, this.testId, this.questionImage).subscribe({
+      this.questionService.create(this.form.value.question, this.testId, this.form.value.textAnswer.toString(), this.questionImage).subscribe({
         next: question => {
           this.toastr.success('Питання створено')
           this.questions.push(question)
@@ -340,6 +344,6 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    DesignService.modalInit(this.popupRef, this.overlayRef)
+    DesignService.modalInit(this.popupRef, this.overlayRef, this.closeRef)
   }
 }

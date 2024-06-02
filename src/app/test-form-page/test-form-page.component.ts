@@ -6,7 +6,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {NgClass, NgIf} from "@angular/common";
 import {TestsService} from "../shared/services/tests.service";
 import {Observable, of, switchMap} from "rxjs";
-import {Test} from "../shared/interfaces";
+import {PossibleResult, Test} from "../shared/interfaces";
 import {ToastrService} from "ngx-toastr";
 
 
@@ -127,7 +127,7 @@ export class TestFormPageComponent implements OnInit {
         '                    Кожному можлимову результату потрібно виставити рамки балів. Після проходження тесту, користувач\n' +
         '                    отримає\n' +
         '                    результат в рамки якого потрапило значення лічильника балів тесту', 'Загальний лічильник', {
-        timeOut: 10000,
+        timeOut: 15000,
         closeButton: true,
         progressBar: true
 
@@ -139,6 +139,15 @@ export class TestFormPageComponent implements OnInit {
         '                    до якого будуть нараховуватися бали та кількість балів, що буде нарахована. Після проходження тесту,\n' +
         '                    користувач\n' +
         '                    отримає результат, який набрав більше балів.', 'Окремі лічильники', {
+        timeOut: 15000,
+        closeButton: true,
+        progressBar: true
+
+      })
+    } else if (type === "category") {
+      this.toastr.info('Додаються категорії, кожна з яких має власний лічільник балів. До кожного варіанту відповіді можна обрати\n' +
+        '                    категоію до якої будуть нараховуватися бали та кількість балів, що буде нарахована. Після проходження тесту,\n' +
+        '                    користувач бачить кількисть набатих балів у кожній категоії', 'Лічильники категоій', {
         timeOut: 15000,
         closeButton: true,
         progressBar: true

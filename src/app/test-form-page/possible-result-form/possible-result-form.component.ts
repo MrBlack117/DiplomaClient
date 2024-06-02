@@ -32,6 +32,7 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
   @Input('processingType') processingType: string;
   @ViewChild('popup', {static: true}) popupRef!: ElementRef;
   @ViewChild('overlay', {static: true}) overlayRef!: ElementRef;
+  @ViewChild('closeBtn', {static: true}) closeRef!: ElementRef;
   @ViewChild('imageInput') imageInputRef: ElementRef;
 
 
@@ -48,8 +49,6 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
-    console.log(this.processingType)
 
     this.form = new FormGroup({
       name: new FormControl(null, [Validators.required]),
@@ -366,6 +365,6 @@ export class PossibleResultFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    DesignService.modalInit(this.popupRef, this.overlayRef)
+    DesignService.modalInit(this.popupRef, this.overlayRef, this.closeRef)
   }
 }

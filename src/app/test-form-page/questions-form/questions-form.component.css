@@ -49,6 +49,7 @@ form{
   padding: 3rem;
   display: flex;
   flex-direction: column;
+  row-gap: 0.5rem;
   justify-content: space-evenly;
   transition: opacity 0.02s 0.4s;
 }
@@ -145,12 +146,14 @@ form.sign-up-form {
 }
 
 .image-preview img{
-  max-height: 5rem;
+  max-height: 10vw;
 }
+
 .image-preview{
   justify-content: center;
   align-items: center;
   display: flex;
+  padding: 1.5rem;
 }
 
 .image-input{
@@ -317,6 +320,8 @@ section.active .overlay {
   pointer-events: none;
   transition: all 0.3s ease;
   transform: translate(-50%, -50%) scale(1.2);
+  max-height: 90%;
+  overflow: auto;
 }
 
 .modal-box i {
@@ -370,4 +375,47 @@ section.active .overlay {
 }
 .question-text .error-message{
   top: 5rem;
+}
+
+.checkbox{
+  padding-bottom: 1rem;
+}
+
+/*=============== BREAKPOINTS ===============*/
+
+@media screen and (max-width: 1024px) {
+  .answer-option{
+    flex-direction: column;
+    row-gap: 1rem;
+  }
+
+  .answer-option .input-warp {
+    width: 90%;
+    padding: 0.5rem;
+  }
+
+  .answer-option .input-field, .answer-option .select-field{
+    width: 65vw;
+  }
+
+  .answer-options-container{
+    padding-bottom: 1rem;
+  }
+
+  .image-preview img{
+    max-height: 20vw;
+  }
+
+}
+
+@media screen and (max-width: 550px) {
+
+  .questions-form form{
+    padding: 1rem;
+  }
+
+  .image-preview img{
+    max-height: 30vw;
+  }
+
 }

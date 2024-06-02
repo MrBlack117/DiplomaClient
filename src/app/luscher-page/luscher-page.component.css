@@ -1,0 +1,18 @@
+button {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.cards{
+  padding: 4rem;
+}
+
+
+
+p {
+  font-size: 1.2em;
+  margin: 10px 0;
+}

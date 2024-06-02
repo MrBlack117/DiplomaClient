@@ -1,12 +1,12 @@
 <main class="main">
   <!--==================== HOME ====================-->
   <section class="home section test-form" id="home">
-    <div class="home__container container grid">
+    <div class="home__container container" [ngClass]="{'grid' : imagePreview }">
 
-      <div class="home__images">
+      <div class="home__images" *ngIf="imagePreview">
 
         <div class="home__img">
-          <img [src]="imagePreview" *ngIf="imagePreview" alt="">
+          <img [src]="imagePreview">
         </div>
 
       </div>
@@ -81,12 +81,20 @@
                     class='bx bx-info-circle'></i></button>
                 </div>
 
+                <div class="type" (click)="processingType = 'category'"
+                     [ngClass]="{ 'selected': processingType === 'category' }">
+                  <p>Лічильники категорій</p>
+                  <button class="infoBtn" type="button" (click)="processingInfo('category')"><i
+                    class='bx bx-info-circle'></i></button>
+                </div>
+
                 <div class="type" (click)="processingType = 'self'"
                      [ngClass]="{ 'selected': processingType === 'self' }">
                   <p>Самостійно</p>
                   <button class="infoBtn" type="button" (click)="processingInfo('self')"><i
                     class='bx bx-info-circle'></i></button>
                 </div>
+
 
               </div>
             </div>

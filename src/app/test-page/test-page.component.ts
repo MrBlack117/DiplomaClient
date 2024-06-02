@@ -7,13 +7,15 @@ import {QuestionsService} from "../shared/services/questions.service";
 import {AnswerOptionsService} from "../shared/services/answer-options.service";
 import {UserTestResultService} from "../shared/services/user-test-result.service";
 import {ToastrService} from "ngx-toastr";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-test-page',
   standalone: true,
   imports: [
     NgIf,
-    NgForOf
+    NgForOf,
+    FormsModule
   ],
   templateUrl: './test-page.component.html',
   styleUrl: './test-page.component.css'
@@ -24,6 +26,11 @@ export class TestPageComponent implements OnInit {
   test: Test;
   questions: Question[];
   selectedOptions: AnswerOption[] = [];
+  textAnswers: {
+    questionId: string,
+    text: string,
+  }[] = [];
+  answeredTextIndexes: number[] = [];
   currentQuestionIndex: number = 0;
   progressPercent: number = 0
 
@@ -68,7 +75,6 @@ export class TestPageComponent implements OnInit {
                       this.toastr.error(err)
                     },
                     complete: () => {
-                      //console.log(this.questions)
                       this.loading = false
                     }
                   })
@@ -90,11 +96,32 @@ export class TestPageComponent implements OnInit {
 
   }
 
+  onTextAnswerChange(event: Event, questionId: string | undefined, index: number): void {
+    if (!this.answeredTextIndexes.includes(index)) {
+      this.currentQuestionIndex += 1;
+      this.answeredTextIndexes.push(index);
+      this.updateProgress();
+    }
+    const newText = (event.target as HTMLInputElement).value;
+    if (questionId !== undefined) {
+      this.textAnswers[index] = {
+        questionId: questionId,
+        text: newText,
+      }
+    }
+  }
+
   updateProgress() {
     this.progressPercent = (this.currentQuestionIndex / this.questions.length * 100);
   }
 
+
   onSubmit() {
+    if (this.currentQuestionIndex < this.questions.length) {
+      this.toastr.info("Будь ласка, дайте відповіді на всі питання")
+      return
+    }
+
     const results: Result[] = []
     const answers: any[] = []
 
@@ -102,16 +129,34 @@ export class TestPageComponent implements OnInit {
     if (this.test.processingType === 'one') {
       let testScore: number = 0;
 
-      if (this.test.possibleResults !== undefined) {
-        for (const selectedOption of this.selectedOptions) {
-          answers.push(selectedOption._id)
-          const answerPoints = selectedOption.score;
-          if (answerPoints !== undefined) {
-            testScore += answerPoints;
+
+      for (const selectedOption of this.selectedOptions) {
+        answers.push(selectedOption._id)
+        const answerPoints = selectedOption.score;
+        if (answerPoints !== undefined) {
+          testScore += answerPoints;
+        }
+      }
+
+      for (const textAnswer of this.textAnswers) {
+        if (textAnswer !== undefined) {
+          for (const question of this.questions) {
+            const options = question.answerOptionsObj
+            if (options !== undefined) {
+              for (const option of options) {
+                if (option.text.toLowerCase() === textAnswer.text.toLowerCase()) {
+                  answers.push(option._id)
+                  const answerPoints = option.score;
+                  if (answerPoints !== undefined) {
+                    testScore += answerPoints;
+                  }
+                }
+              }
+            }
           }
         }
-
       }
+
 
       const newUserTestResult: UserTestResult = {
         test: this.test._id,
@@ -138,11 +183,34 @@ export class TestPageComponent implements OnInit {
         });
 
         for (const selectedOption of this.selectedOptions) {
-          answers.push(selectedOption._id)
-          const possibleResultId = selectedOption.possibleResultId;
-          const answerPoints = selectedOption.score;
-          if(possibleResultId !== undefined && answerPoints !== undefined) {
-            resultsMap[possibleResultId] += answerPoints;
+          if (selectedOption != undefined) {
+            answers.push(selectedOption._id)
+            const possibleResultId = selectedOption.possibleResultId;
+            const answerPoints = selectedOption.score;
+            if (possibleResultId !== undefined && answerPoints !== undefined) {
+              resultsMap[possibleResultId] += answerPoints;
+            }
+          }
+
+        }
+
+        for (const textAnswer of this.textAnswers) {
+          if (textAnswer != undefined) {
+            for (const question of this.questions) {
+              const options = question.answerOptionsObj
+              if (options !== undefined) {
+                for (const option of options) {
+                  if (option.text.toLowerCase() === textAnswer.text.toLowerCase()) {
+                    answers.push(option._id)
+                    const possibleResultId = option.possibleResultId;
+                    const answerPoints = option.score;
+                    if (possibleResultId !== undefined && answerPoints !== undefined) {
+                      resultsMap[possibleResultId] += answerPoints;
+                    }
+                  }
+                }
+              }
+            }
           }
 
         }
@@ -169,6 +237,75 @@ export class TestPageComponent implements OnInit {
         }
       );
 
+    } else if (this.test.processingType === 'category') {
+      let testScore: number = 0;
+
+      if (this.test.possibleResults !== undefined) {
+        const resultsMap: { [key: string]: number } = {};
+
+
+        this.test.possibleResults.forEach(possibleResultId => {
+          resultsMap[possibleResultId] = 0;
+        });
+
+        for (const selectedOption of this.selectedOptions) {
+          if (selectedOption != undefined) {
+            answers.push(selectedOption._id)
+            const possibleResultId = selectedOption.possibleResultId;
+            const answerPoints = selectedOption.score;
+            if (possibleResultId !== undefined && answerPoints !== undefined) {
+              resultsMap[possibleResultId] += answerPoints;
+              testScore += answerPoints;
+            }
+          }
+
+        }
+
+        for (const textAnswer of this.textAnswers) {
+          if (textAnswer != undefined) {
+            for (const question of this.questions) {
+              const options = question.answerOptionsObj
+              if (options !== undefined) {
+                for (const option of options) {
+                  if (option.text.toLowerCase() === textAnswer.text.toLowerCase()) {
+                    answers.push(option._id)
+                    const possibleResultId = option.possibleResultId;
+                    const answerPoints = option.score;
+                    if (possibleResultId !== undefined && answerPoints !== undefined) {
+                      resultsMap[possibleResultId] += answerPoints;
+                      testScore += answerPoints;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+        }
+
+        Object.entries(resultsMap).forEach(([possibleResultId, score]) => {
+          results.push({_id: possibleResultId, score});
+        });
+
+      }
+
+      const newUserTestResult: UserTestResult = {
+        test: this.test._id,
+        results: results,
+        score: testScore,
+        answers: answers
+      };
+
+      this.userTestResultService.create(newUserTestResult).subscribe({
+          next: (response) => {
+            this.router.navigate([`/result/${response._id}`]);
+          },
+          error: (errorResponse) => {
+            this.toastr.error(errorResponse.error)
+          }
+        }
+      );
+
     } else if (this.test.processingType === 'self') {
       if (this.test.possibleResults !== undefined) {
         for (const selectedOption of this.selectedOptions) {
@@ -178,7 +315,8 @@ export class TestPageComponent implements OnInit {
 
       const newUserTestResult: UserTestResult = {
         test: this.test._id,
-        answers: answers
+        answers: answers,
+        textAnswers: this.textAnswers,
       };
 
       this.userTestResultService.create(newUserTestResult).subscribe({

@@ -31,11 +31,11 @@
   overflow: auto;
 }
 
-.created{
+.created {
   padding-bottom: 0rem;
 }
 
-.users-results-mode .tests{
+.users-results-mode .tests {
   padding-bottom: 2rem;
   padding-top: 2rem;
   max-height: 30vh;
@@ -53,14 +53,14 @@
   color: var(--text-color);
 }
 
-.test-add{
+.test-add {
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.test-link{
+.test-link {
   cursor: pointer;
 
 }
@@ -74,7 +74,7 @@
   background: var(--container-color);
 }
 
-.testData{
+.testData {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
 }
@@ -84,12 +84,12 @@
   grid-row: 1 / 2;
 }
 
-.resultsList{
+.resultsList {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
 }
 
-.user-answers{
+.user-answers {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
 }
@@ -107,41 +107,41 @@
   opacity: 0;
 }
 
-.resultsList{
+.resultsList {
   transform: translateX(200%);
   transition: .5s;
   opacity: 0;
 }
 
-.user-answers{
+.user-answers {
   transform: translateX(300%);
   transition: .5s;
   opacity: 0;
 }
 
 
-.userContent.statistics-mode .testData{
+.userContent.statistics-mode .testData {
   transform: translateX(-100%);
   opacity: 0;
 }
 
 .userContent.statistics-mode .testStatistics {
- transform: translateX(0%);
+  transform: translateX(0%);
   opacity: 1;
 }
 
-.userContent.statistics-mode .resultsList{
+.userContent.statistics-mode .resultsList {
   transform: translateX(100%);
   opacity: 0;
 }
 
-.userContent.statistics-mode  .user-answers{
+.userContent.statistics-mode .user-answers {
   transform: translateX(200%);
   opacity: 0;
 }
 
 
-.userContent.users-results-mode .testData{
+.userContent.users-results-mode .testData {
   transform: translateX(-200%);
   opacity: 0;
 }
@@ -151,19 +151,18 @@
   opacity: 0;
 }
 
-.userContent.users-results-mode .resultsList{
+.userContent.users-results-mode .resultsList {
   transform: translateX(0%);
   opacity: 1;
 }
 
-.userContent.users-results-mode  .user-answers{
+.userContent.users-results-mode .user-answers {
   transform: translateX(100%);
   opacity: 0;
 }
 
 
-
-.userContent.users-answers-mode .testData{
+.userContent.users-answers-mode .testData {
   transform: translateX(-300%);
   opacity: 0;
 }
@@ -173,50 +172,122 @@
   opacity: 0;
 }
 
-.userContent.users-answers-mode .resultsList{
+.userContent.users-answers-mode .resultsList {
   transform: translateX(-100%);
   opacity: 0;
 }
 
-.userContent.users-answers-mode  .user-answers{
+.userContent.users-answers-mode .user-answers {
   transform: translateX(0%);
   opacity: 1;
 }
 
 
-.answer-options{
+.answer-options {
   max-height: 20rem;
   overflow: auto;
 }
 
-.possible-results{
+.possible-results {
   max-height: 10rem;
   overflow: auto;
   margin-bottom: 2rem;
 }
 
 
-.questions{
+.questions {
   max-height: 10rem;
   overflow: auto;
 }
 
-.user-answers_question{
+.user-answers_question {
   margin-top: 2rem
 }
 
-.answer-option{
+.answer-option {
   display: flex;
   flex-direction: row;
 }
 
-.answers-wrap{
+.answers-wrap {
   margin-bottom: 2rem;
+  max-height: 330px;
+  overflow: auto;
 }
 
-.back-button{
+.back-button {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
+
+
+.inner__box {
+  position: relative;
+  width: auto;
+  height: auto;
+  top: 0%;
+  left: 0%;
+  transform: translate(0%, 0%);
+}
+
+/*=============== BREAKPOINTS ===============*/
+
+@media (max-width: 850px) {
+  .userContent {
+    padding: 2rem 3rem 3rem;
+  }
+
+  .icons {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+  }
+}
+
+@media (max-width: 530px) {
+  .userHeader {
+    padding-bottom: 1rem;
+    flex-direction: column;
+  }
+
+  .button {
+    margin-top: 1rem;
+  }
+
+  .userContent {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .logo {
+    padding-left: 1rem;
+  }
+
+  .completedTests {
+    margin-bottom: 0.2rem;
+  }
+
+  .test p {
+    max-width: 135px;
+  }
+
+
+}
+
+@media (max-width: 420px) {
+  .button {
+    margin-top: 1rem;
+  }
+
+  .userContent {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .logo {
+    padding-left: 1rem;
+  }
+  .test p {
+    max-width: 100px;
+  }
+}
+
 
