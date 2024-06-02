@@ -121,7 +121,7 @@
         </div>
 
         <button type="button" class="add-answer-btn" (click)="addAnswerOption()">Додати варіант відповіді</button>
-        <button type="submit" class="add-question-block-btn">Зберегти питання</button>
+        <button type="submit" class="add-question-block-btn" [disabled]="form.invalid || form.disabled">Зберегти питання</button>
         <button type="button" class="add-question-block-btn" #closeBtn>Закрити</button>
       </form>
     </div>
