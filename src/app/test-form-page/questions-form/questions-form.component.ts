@@ -43,7 +43,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
   questionId: string | undefined = undefined;
   loading = false;
   form: FormGroup;
-  questionImage: File;
+  questionImage: File | undefined = undefined;
   questionImagePreview: any;
   answerOptionImages: File[] = []; // Создаем массив для хранения изображений вариантов ответов
   answerOptionPreviews: any[] = [];
@@ -119,6 +119,7 @@ export class QuestionsFormComponent implements OnInit, AfterViewInit {
     (this.form.get('answerOptions') as FormArray).clear();
     this.actualizePossibleResults()
     this.questionId = undefined;
+    this.questionImage = undefined;
     this.questionImagePreview = ''
     this.answerOptionPreviews = []
     this.form.reset({
